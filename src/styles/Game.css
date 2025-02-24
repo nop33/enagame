@@ -1,0 +1,217 @@
+@font-face {
+  font-family: "Pokemon GB";
+  src: url("https://cdn.jsdelivr.net/npm/pokemon-font@1.8.1/fonts/pokemon-font.woff2") format("woff2");
+  font-weight: normal;
+  font-style: normal;
+}
+
+.game-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: #7b9c98;
+  position: relative;
+  font-family: "Pokemon GB", monospace;
+}
+
+.game-wrapper {
+  width: 1024px;
+  height: 768px;
+  background-color: #000;
+  border-radius: 12px;
+  overflow: hidden;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.game-grid {
+  background-color: #34495e;
+  padding: 30px;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 0 30px rgba(0, 0, 0, 0.3);
+}
+
+.grid-row {
+  display: flex;
+}
+
+.cell {
+  width: 64px;
+  height: 64px;
+  background-color: #95a5a6;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.terrain-tile {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  image-rendering: pixelated;
+}
+
+.grass-tile {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  image-rendering: pixelated;
+}
+
+.player-sprite {
+  width: 48px;
+  height: 48px;
+  image-rendering: pixelated;
+  filter: drop-shadow(2px 2px 2px rgba(0, 0, 0, 0.2));
+  position: relative;
+  z-index: 1;
+}
+
+.battle-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color: #000;
+  overflow: hidden;
+  z-index: 100;
+}
+
+.battle-overlay h2 {
+  margin-bottom: 2rem;
+  text-align: center;
+  font-size: 1.5rem;
+  color: #f1c40f;
+}
+
+.battle-transition {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 99;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  pointer-events: none;
+}
+
+.flash-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: white;
+  animation: flash 2s ease-out forwards;
+  z-index: 100;
+}
+
+@keyframes flash {
+  0% {
+    opacity: 0;
+  }
+  25% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+  75% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+.battle-message {
+  font-family: "Pokemon GB", monospace;
+  color: white;
+  font-size: 16px;
+  text-align: center;
+  z-index: 101;
+  animation: fadeIn 0.5s ease-in forwards;
+  animation-delay: 1s;
+  opacity: 0;
+  text-shadow: 2px 2px 0 #000;
+  pointer-events: none;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.player-container {
+  position: relative;
+  width: 48px;
+  height: 48px;
+  z-index: 1;
+}
+
+.player-health {
+  position: absolute;
+  top: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 32px;
+  height: 4px;
+  background-color: #ff0000;
+  border-radius: 2px;
+  z-index: 2;
+  border: 1px solid rgba(0, 0, 0, 0.5);
+  font-family: "Pokemon GB", monospace;
+}
+
+.health-bar {
+  height: 100%;
+  background-color: #2ecc71;
+  border-radius: 1px;
+  transition: width 0.3s ease;
+}
+
+.pokecenter-sprite {
+  width: 64px;
+  height: 64px;
+  image-rendering: pixelated;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1;
+}
+
+.home-sprite {
+  width: 64px;
+  height: 64px;
+  image-rendering: pixelated;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1;
+}
