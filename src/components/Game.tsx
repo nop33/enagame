@@ -2,10 +2,12 @@ import React, { useState, useEffect, useRef, useCallback } from "react";
 import Battle, { EnemyType } from "./Battle";
 import "../styles/Game.css";
 import characterSprite from "../assets/character.png";
+import characterSwimSprite from "../assets/character-swim.png";
 import grassTile from "../assets/grass.jpg";
 import grass2Tile from "../assets/grass2.jpg";
 import sandTile from "../assets/sand.jpg";
 import seaTile from "../assets/sea.jpg";
+import treeTile from "../assets/tree.jpg";
 import battleMusic from "../assets/battle.mp3";
 import victoryMusic from "../assets/victory.mp3";
 import themeMusic from "../assets/theme.mp3";
@@ -29,6 +31,7 @@ interface GameState {
   stepsInGrass: number;
   stepsUntilBattle: number;
   currentEnemyType: EnemyType;
+  isSwimming: boolean;
 }
 
 const GRID_SIZE = 10;
@@ -71,23 +74,17 @@ const GRASS2_PATCHES = [
   { x: 5, y: 2 },
   { x: 5, y: 3 },
   { x: 5, y: 4 },
-  { x: 5, y: 5 },
-  // Bottom border
+  // Bottom border (removed overlapping coordinates in row 5)
   { x: 6, y: 3 },
   { x: 6, y: 4 },
-  { x: 6, y: 5 },
   { x: 7, y: 4 },
-  { x: 7, y: 5 },
-  { x: 8, y: 5 },
-  { x: 9, y: 5 },
   // Right border
-  { x: 9, y: 5 },
   { x: 9, y: 6 },
-  // Additional patches for natural look
-  { x: 8, y: 6 },
-  { x: 7, y: 6 },
-  { x: 6, y: 6 },
-  { x: 5, y: 6 },
+  // Transition patches where trees were removed
+  { x: 4, y: 5 },
+  { x: 4, y: 6 },
+  { x: 4, y: 7 },
+  { x: 4, y: 8 },
 ];
 
 // Sea tiles in the bottom right corner
@@ -100,6 +97,31 @@ const SEA_PATCHES = [
   { x: 7, y: 9 },
   { x: 8, y: 9 },
   { x: 9, y: 9 },
+];
+
+// Tree patches to create a forest between grass and sea
+const TREE_PATCHES = [
+  // Trees one line above the existing forest (row 5)
+  { x: 6, y: 5 },
+  { x: 7, y: 5 },
+  { x: 8, y: 5 },
+  { x: 9, y: 5 },
+  { x: 5, y: 5 },
+  // Trees directly below tall grass
+  { x: 6, y: 6 },
+  { x: 7, y: 6 },
+  { x: 8, y: 6 },
+  { x: 9, y: 6 },
+  { x: 5, y: 6 },
+  // Row 6 - Trees below grass area
+  { x: 6, y: 7 },
+  { x: 7, y: 7 },
+  { x: 8, y: 7 },
+  { x: 9, y: 7 },
+  { x: 5, y: 7 },
+  // Row 7 - Trees above sea
+  { x: 6, y: 8 },
+  { x: 5, y: 8 },
 ];
 
 // The row 7 will be sand by default, creating a beach transition between grass and sea
@@ -116,6 +138,7 @@ export const Game: React.FC = () => {
     stepsInGrass: 0,
     stepsUntilBattle: 0,
     currentEnemyType: EnemyType.PIGEON,
+    isSwimming: false,
   });
 
   const battleAudioRef = useRef<HTMLAudioElement | null>(null);
@@ -248,6 +271,15 @@ export const Game: React.FC = () => {
             return prev;
         }
 
+        // Check if the new position is a tree - if so, prevent movement
+        const isTree = TREE_PATCHES.some((patch) => patch.x === newPosition.x && patch.y === newPosition.y);
+        if (isTree) {
+          return prev; // Don't allow movement into trees
+        }
+
+        // Check if the new position is sea - allow movement but track it in state
+        const isSea = SEA_PATCHES.some((patch) => patch.x === newPosition.x && patch.y === newPosition.y);
+
         // Check if player is at Pokémon Center (1,8)
         if (newPosition.x === 1 && newPosition.y === 8) {
           // Play healing sound if health is not full
@@ -259,6 +291,7 @@ export const Game: React.FC = () => {
             ...prev,
             playerPosition: newPosition,
             playerHealth: MAX_HEALTH, // Heal to full health
+            isSwimming: false, // Not swimming at Pokémon Center
           };
         }
 
@@ -277,6 +310,7 @@ export const Game: React.FC = () => {
             playerPosition: newPosition,
             stepsInGrass: 1, // First step in grass
             stepsUntilBattle: randomSteps,
+            isSwimming: false, // Not swimming in grass
           };
         }
 
@@ -292,6 +326,7 @@ export const Game: React.FC = () => {
               playerPosition: newPosition,
               isTransitioning: true,
               stepsInGrass: 0, // Reset steps counter
+              isSwimming: false, // Not swimming during battle
             };
           }
 
@@ -299,6 +334,7 @@ export const Game: React.FC = () => {
             ...prev,
             playerPosition: newPosition,
             stepsInGrass: newStepsInGrass,
+            isSwimming: false, // Not swimming in grass
           };
         }
 
@@ -308,12 +344,14 @@ export const Game: React.FC = () => {
             ...prev,
             playerPosition: newPosition,
             stepsInGrass: 0,
+            isSwimming: isSea, // Set swimming state based on if they're in sea
           };
         }
 
         return {
           ...prev,
           playerPosition: newPosition,
+          isSwimming: isSea, // Set swimming state based on if they're in sea
         };
       });
     },
@@ -332,13 +370,20 @@ export const Game: React.FC = () => {
           victoryAudioRef.current.pause();
           victoryAudioRef.current.currentTime = 0;
         }
-        setGameState((prev) => ({
-          ...prev,
-          inBattle: false,
-          playerHealth: prev.playerHealth,
-          enemyHealth: MAX_HEALTH,
-          isVictory: false,
-        }));
+        setGameState((prev) => {
+          // Check if player is in sea after battle
+          const isInSea = SEA_PATCHES.some(
+            (patch) => patch.x === prev.playerPosition.x && patch.y === prev.playerPosition.y
+          );
+          return {
+            ...prev,
+            inBattle: false,
+            playerHealth: prev.playerHealth,
+            enemyHealth: MAX_HEALTH,
+            isVictory: false,
+            isSwimming: isInSea, // Set swimming state based on position
+          };
+        });
       }, 5000); // Extended to 5 seconds for victory celebration
     } else {
       // When player loses, teleport them to Pokémon Center and heal
@@ -353,6 +398,7 @@ export const Game: React.FC = () => {
         enemyHealth: MAX_HEALTH,
         isVictory: false,
         playerPosition: { x: 1, y: 8 }, // Teleport to Pokémon Center
+        isSwimming: false, // Not swimming at Pokémon Center
       }));
     }
   };
@@ -379,6 +425,7 @@ export const Game: React.FC = () => {
         const isBattleGrass = GRASS_PATCHES.some((patch) => patch.x === x && patch.y === y);
         const isNormalGrass = GRASS2_PATCHES.some((patch) => patch.x === x && patch.y === y);
         const isSea = SEA_PATCHES.some((patch) => patch.x === x && patch.y === y);
+        const isTree = TREE_PATCHES.some((patch) => patch.x === x && patch.y === y);
         const isPokecenter = x === 1 && y === 8;
         const isHome = x === 1 && y === 1;
 
@@ -387,7 +434,10 @@ export const Game: React.FC = () => {
             {isBattleGrass && <img src={grassTile} alt="Battle Grass" className="terrain-tile" />}
             {isNormalGrass && <img src={grass2Tile} alt="Normal Grass" className="terrain-tile" />}
             {isSea && <img src={seaTile} alt="Sea" className="terrain-tile" />}
-            {!isBattleGrass && !isNormalGrass && !isSea && <img src={sandTile} alt="Sand" className="terrain-tile" />}
+            {isTree && <img src={treeTile} alt="Tree" className="terrain-tile" />}
+            {!isBattleGrass && !isNormalGrass && !isSea && !isTree && (
+              <img src={sandTile} alt="Sand" className="terrain-tile" />
+            )}
             {isPokecenter && <img src={pokecenterImage} alt="Pokémon Center" className="pokecenter-sprite" />}
             {isHome && <img src={homeImage} alt="Home" className="home-sprite" />}
             {isPlayer && (
@@ -398,7 +448,11 @@ export const Game: React.FC = () => {
                     style={{ width: `${(gameState.playerHealth / MAX_HEALTH) * 100}%` }}
                   ></div>
                 </div>
-                <img src={characterSprite} alt="Player" className="player-sprite" />
+                <img
+                  src={gameState.isSwimming ? characterSwimSprite : characterSprite}
+                  alt="Player"
+                  className={`player-sprite ${gameState.isSwimming ? "bobbing" : ""}`}
+                />
               </div>
             )}
           </div>

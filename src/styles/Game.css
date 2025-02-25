@@ -61,6 +61,41 @@
   image-rendering: pixelated;
 }
 
+/* Tree styling to make them look more prominent */
+.cell img[alt="Tree"] {
+  filter: brightness(0.9) contrast(1.1);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  z-index: 1; /* Make trees appear above regular terrain */
+}
+
+/* Add some variation to trees based on position */
+.cell:nth-child(odd) img[alt="Tree"] {
+  filter: brightness(0.85) contrast(1.15) saturate(1.05);
+  transform: scale(1.05);
+}
+
+.cell:nth-child(even) img[alt="Tree"] {
+  filter: brightness(0.95) contrast(1.05) saturate(0.95);
+  transform: scale(0.98);
+}
+
+/* Add more variation based on row position */
+.grid-row:nth-child(odd) .cell img[alt="Tree"] {
+  filter: brightness(0.88) contrast(1.12) saturate(1.02);
+  transform: rotate(1deg) scale(1.02);
+}
+
+.grid-row:nth-child(even) .cell img[alt="Tree"] {
+  filter: brightness(0.92) contrast(1.08) saturate(0.98);
+  transform: rotate(-1deg) scale(0.99);
+}
+
+/* Make the leftmost column of trees (forest edge) slightly different */
+.cell:nth-child(5) img[alt="Tree"] {
+  filter: brightness(0.93) contrast(1.07) saturate(1.03);
+  transform: rotate(-1.5deg) scale(0.97);
+}
+
 .grass-tile {
   position: absolute;
   top: 0;
@@ -78,6 +113,22 @@
   filter: drop-shadow(2px 2px 2px rgba(0, 0, 0, 0.2));
   position: relative;
   z-index: 1;
+}
+
+/* Bobbing animation for swimming sprite */
+.player-sprite.bobbing {
+  animation: bobbing 2s infinite ease-in-out;
+  filter: drop-shadow(2px 2px 2px rgba(0, 0, 0, 0.4));
+}
+
+@keyframes bobbing {
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-3px);
+  }
 }
 
 .battle-overlay {
