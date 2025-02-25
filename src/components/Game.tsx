@@ -32,6 +32,7 @@ interface GameState {
 }
 
 const GRID_SIZE = 10;
+const MAX_HEALTH = 3; // Maximum health for both player and enemies
 
 // High grass where Pokémon can be found (top-right region)
 const GRASS_PATCHES = [
@@ -107,8 +108,8 @@ export const Game: React.FC = () => {
   const [gameState, setGameState] = useState<GameState>({
     playerPosition: { x: 0, y: 0 },
     inBattle: false,
-    playerHealth: 3,
-    enemyHealth: 3,
+    playerHealth: MAX_HEALTH,
+    enemyHealth: MAX_HEALTH,
     isTransitioning: false,
     isVictory: false,
     hasInteracted: false,
@@ -250,14 +251,14 @@ export const Game: React.FC = () => {
         // Check if player is at Pokémon Center (1,8)
         if (newPosition.x === 1 && newPosition.y === 8) {
           // Play healing sound if health is not full
-          if (prev.playerHealth < 3 && healAudioRef.current) {
+          if (prev.playerHealth < MAX_HEALTH && healAudioRef.current) {
             healAudioRef.current.currentTime = 0;
             healAudioRef.current.play();
           }
           return {
             ...prev,
             playerPosition: newPosition,
-            playerHealth: 3, // Heal to full health
+            playerHealth: MAX_HEALTH, // Heal to full health
           };
         }
 
@@ -335,7 +336,7 @@ export const Game: React.FC = () => {
           ...prev,
           inBattle: false,
           playerHealth: prev.playerHealth,
-          enemyHealth: 3,
+          enemyHealth: MAX_HEALTH,
           isVictory: false,
         }));
       }, 5000); // Extended to 5 seconds for victory celebration
@@ -348,8 +349,8 @@ export const Game: React.FC = () => {
       setGameState((prev) => ({
         ...prev,
         inBattle: false,
-        playerHealth: 3, // Heal to full health
-        enemyHealth: 3,
+        playerHealth: MAX_HEALTH, // Heal to full health
+        enemyHealth: MAX_HEALTH,
         isVictory: false,
         playerPosition: { x: 1, y: 8 }, // Teleport to Pokémon Center
       }));
@@ -392,7 +393,10 @@ export const Game: React.FC = () => {
             {isPlayer && (
               <div className="player-container">
                 <div className="player-health">
-                  <div className="health-bar" style={{ width: `${(gameState.playerHealth / 3) * 100}%` }}></div>
+                  <div
+                    className="health-bar"
+                    style={{ width: `${(gameState.playerHealth / MAX_HEALTH) * 100}%` }}
+                  ></div>
                 </div>
                 <img src={characterSprite} alt="Player" className="player-sprite" />
               </div>
