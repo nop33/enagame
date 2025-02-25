@@ -353,7 +353,7 @@ export const Game: React.FC = () => {
   useEffect(() => {
     window.addEventListener("keydown", handleKeyPress);
     return () => window.removeEventListener("keydown", handleKeyPress);
-  }, [gameState.inBattle]);
+  }, [gameState.inBattle, handleKeyPress]);
 
   const renderGrid = () => {
     const grid = [];
