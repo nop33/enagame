@@ -26,6 +26,8 @@ interface GameState {
   isTransitioning: boolean;
   isVictory: boolean;
   hasInteracted: boolean;
+  stepsInGrass: number;
+  stepsUntilBattle: number;
 }
 
 const GRID_SIZE = 10;
@@ -109,6 +111,8 @@ export const Game: React.FC = () => {
     isTransitioning: false,
     isVictory: false,
     hasInteracted: false,
+    stepsInGrass: 0,
+    stepsUntilBattle: 0,
   });
 
   const battleAudioRef = useRef<HTMLAudioElement | null>(null);
@@ -245,16 +249,52 @@ export const Game: React.FC = () => {
         };
       }
 
-      // Check if player is in tall grass (battle grass) only
+      // Check if player is in tall grass (battle grass)
       const isInBattleGrass = GRASS_PATCHES.some((patch) => patch.x === newPosition.x && patch.y === newPosition.y);
-      const shouldStartBattle = isInBattleGrass && Math.random() < 0.3;
+      const wasInBattleGrass = GRASS_PATCHES.some(
+        (patch) => patch.x === prev.playerPosition.x && patch.y === prev.playerPosition.y
+      );
 
-      if (shouldStartBattle) {
-        setTimeout(startBattle, 100);
+      // If player just entered the tall grass, set a random number of steps until battle
+      if (isInBattleGrass && !wasInBattleGrass) {
+        // Generate a random number between 2 and 5 steps
+        const randomSteps = Math.floor(Math.random() * 4) + 2;
         return {
           ...prev,
           playerPosition: newPosition,
-          isTransitioning: true,
+          stepsInGrass: 1, // First step in grass
+          stepsUntilBattle: randomSteps,
+        };
+      }
+
+      // If player is still in tall grass, increment step counter
+      if (isInBattleGrass && wasInBattleGrass) {
+        const newStepsInGrass = prev.stepsInGrass + 1;
+
+        // Check if we've reached the required number of steps for a battle
+        if (newStepsInGrass >= prev.stepsUntilBattle) {
+          setTimeout(startBattle, 100);
+          return {
+            ...prev,
+            playerPosition: newPosition,
+            isTransitioning: true,
+            stepsInGrass: 0, // Reset steps counter
+          };
+        }
+
+        return {
+          ...prev,
+          playerPosition: newPosition,
+          stepsInGrass: newStepsInGrass,
+        };
+      }
+
+      // If player left the tall grass, reset the step counter
+      if (!isInBattleGrass && wasInBattleGrass) {
+        return {
+          ...prev,
+          playerPosition: newPosition,
+          stepsInGrass: 0,
         };
       }
 
