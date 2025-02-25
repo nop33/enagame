@@ -12,9 +12,9 @@ import useTypewriter from "../hooks/useTypewriter";
 // Sample quiz questions
 const QUIZ_QUESTIONS = [
   {
-    question: "What is the capital of France?",
-    options: ["London", "Berlin", "Paris", "Madrid"],
-    correctAnswer: "Paris",
+    question: "What is 1 + 1?",
+    options: ["3", "4", "2", "6"],
+    correctAnswer: "2",
   },
   {
     question: "What is 2 + 2?",
@@ -22,19 +22,9 @@ const QUIZ_QUESTIONS = [
     correctAnswer: "4",
   },
   {
-    question: "Which planet is closest to the Sun?",
-    options: ["Venus", "Mars", "Mercury", "Earth"],
-    correctAnswer: "Mercury",
-  },
-  {
-    question: "What is the largest mammal?",
-    options: ["African Elephant", "Blue Whale", "Giraffe", "Hippopotamus"],
-    correctAnswer: "Blue Whale",
-  },
-  {
-    question: "Who painted the Mona Lisa?",
-    options: ["Van Gogh", "Da Vinci", "Picasso", "Rembrandt"],
-    correctAnswer: "Da Vinci",
+    question: "What is 3 + 3?",
+    options: ["3", "4", "5", "6"],
+    correctAnswer: "6",
   },
 ];
 
