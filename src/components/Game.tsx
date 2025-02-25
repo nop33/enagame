@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import Battle from "./Battle";
 import "../styles/Game.css";
 import characterSprite from "../assets/character.png";
@@ -194,116 +194,119 @@ export const Game: React.FC = () => {
   const startBattle = () => {
     setTimeout(() => {
       setGameState((prev) => ({ ...prev, isTransitioning: false, inBattle: true }));
-    }, 2000);
+    }, 4000);
   };
 
-  const handleKeyPress = (e: KeyboardEvent) => {
-    // Start theme music on first interaction if not already playing
-    if (!gameState.hasInteracted && themeAudioRef.current) {
-      themeAudioRef.current.play();
-      setGameState((prev) => ({ ...prev, hasInteracted: true }));
-    }
-
-    // Prevent any movement if in battle or during battle transition
-    if (gameState.inBattle || gameState.isTransitioning) {
-      e.preventDefault();
-      return;
-    }
-
-    // Prevent default scrolling behavior
-    if (["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].includes(e.key)) {
-      e.preventDefault();
-    }
-
-    setGameState((prev) => {
-      const newPosition = { ...prev.playerPosition };
-
-      switch (e.key) {
-        case "ArrowUp":
-          if (newPosition.y > 0) newPosition.y -= 1;
-          break;
-        case "ArrowDown":
-          if (newPosition.y < GRID_SIZE - 1) newPosition.y += 1;
-          break;
-        case "ArrowLeft":
-          if (newPosition.x > 0) newPosition.x -= 1;
-          break;
-        case "ArrowRight":
-          if (newPosition.x < GRID_SIZE - 1) newPosition.x += 1;
-          break;
-        default:
-          return prev;
+  const handleKeyPress = useCallback(
+    (e: KeyboardEvent) => {
+      // Start theme music on first interaction if not already playing
+      if (!gameState.hasInteracted && themeAudioRef.current) {
+        themeAudioRef.current.play();
+        setGameState((prev) => ({ ...prev, hasInteracted: true }));
       }
 
-      // Check if player is at Pokémon Center (1,8)
-      if (newPosition.x === 1 && newPosition.y === 8) {
-        // Play healing sound if health is not full
-        if (prev.playerHealth < 3 && healAudioRef.current) {
-          healAudioRef.current.currentTime = 0;
-          healAudioRef.current.play();
+      // Prevent any movement if in battle or during battle transition
+      if (gameState.inBattle || gameState.isTransitioning) {
+        e.preventDefault();
+        return;
+      }
+
+      // Prevent default scrolling behavior
+      if (["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].includes(e.key)) {
+        e.preventDefault();
+      }
+
+      setGameState((prev) => {
+        const newPosition = { ...prev.playerPosition };
+
+        switch (e.key) {
+          case "ArrowUp":
+            if (newPosition.y > 0) newPosition.y -= 1;
+            break;
+          case "ArrowDown":
+            if (newPosition.y < GRID_SIZE - 1) newPosition.y += 1;
+            break;
+          case "ArrowLeft":
+            if (newPosition.x > 0) newPosition.x -= 1;
+            break;
+          case "ArrowRight":
+            if (newPosition.x < GRID_SIZE - 1) newPosition.x += 1;
+            break;
+          default:
+            return prev;
         }
-        return {
-          ...prev,
-          playerPosition: newPosition,
-          playerHealth: 3, // Heal to full health
-        };
-      }
 
-      // Check if player is in tall grass (battle grass)
-      const isInBattleGrass = GRASS_PATCHES.some((patch) => patch.x === newPosition.x && patch.y === newPosition.y);
-      const wasInBattleGrass = GRASS_PATCHES.some(
-        (patch) => patch.x === prev.playerPosition.x && patch.y === prev.playerPosition.y
-      );
-
-      // If player just entered the tall grass, set a random number of steps until battle
-      if (isInBattleGrass && !wasInBattleGrass) {
-        // Generate a random number between 2 and 5 steps
-        const randomSteps = Math.floor(Math.random() * 4) + 2;
-        return {
-          ...prev,
-          playerPosition: newPosition,
-          stepsInGrass: 1, // First step in grass
-          stepsUntilBattle: randomSteps,
-        };
-      }
-
-      // If player is still in tall grass, increment step counter
-      if (isInBattleGrass && wasInBattleGrass) {
-        const newStepsInGrass = prev.stepsInGrass + 1;
-
-        // Check if we've reached the required number of steps for a battle
-        if (newStepsInGrass >= prev.stepsUntilBattle) {
-          setTimeout(startBattle, 100);
+        // Check if player is at Pokémon Center (1,8)
+        if (newPosition.x === 1 && newPosition.y === 8) {
+          // Play healing sound if health is not full
+          if (prev.playerHealth < 3 && healAudioRef.current) {
+            healAudioRef.current.currentTime = 0;
+            healAudioRef.current.play();
+          }
           return {
             ...prev,
             playerPosition: newPosition,
-            isTransitioning: true,
-            stepsInGrass: 0, // Reset steps counter
+            playerHealth: 3, // Heal to full health
+          };
+        }
+
+        // Check if player is in tall grass (battle grass)
+        const isInBattleGrass = GRASS_PATCHES.some((patch) => patch.x === newPosition.x && patch.y === newPosition.y);
+        const wasInBattleGrass = GRASS_PATCHES.some(
+          (patch) => patch.x === prev.playerPosition.x && patch.y === prev.playerPosition.y
+        );
+
+        // If player just entered the tall grass, set a random number of steps until battle
+        if (isInBattleGrass && !wasInBattleGrass) {
+          // Generate a random number between 2 and 5 steps
+          const randomSteps = Math.floor(Math.random() * 4) + 2;
+          return {
+            ...prev,
+            playerPosition: newPosition,
+            stepsInGrass: 1, // First step in grass
+            stepsUntilBattle: randomSteps,
+          };
+        }
+
+        // If player is still in tall grass, increment step counter
+        if (isInBattleGrass && wasInBattleGrass) {
+          const newStepsInGrass = prev.stepsInGrass + 1;
+
+          // Check if we've reached the required number of steps for a battle
+          if (newStepsInGrass >= prev.stepsUntilBattle) {
+            setTimeout(startBattle, 100);
+            return {
+              ...prev,
+              playerPosition: newPosition,
+              isTransitioning: true,
+              stepsInGrass: 0, // Reset steps counter
+            };
+          }
+
+          return {
+            ...prev,
+            playerPosition: newPosition,
+            stepsInGrass: newStepsInGrass,
+          };
+        }
+
+        // If player left the tall grass, reset the step counter
+        if (!isInBattleGrass && wasInBattleGrass) {
+          return {
+            ...prev,
+            playerPosition: newPosition,
+            stepsInGrass: 0,
           };
         }
 
         return {
           ...prev,
           playerPosition: newPosition,
-          stepsInGrass: newStepsInGrass,
         };
-      }
-
-      // If player left the tall grass, reset the step counter
-      if (!isInBattleGrass && wasInBattleGrass) {
-        return {
-          ...prev,
-          playerPosition: newPosition,
-          stepsInGrass: 0,
-        };
-      }
-
-      return {
-        ...prev,
-        playerPosition: newPosition,
-      };
-    });
-  };
+      });
+    },
+    [gameState]
+  );
 
   const handleBattleEnd = (won: boolean) => {
     if (won) {
