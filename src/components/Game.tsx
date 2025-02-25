@@ -5,6 +5,7 @@ import characterSprite from "../assets/character.png";
 import grassTile from "../assets/grass.jpg";
 import grass2Tile from "../assets/grass2.jpg";
 import sandTile from "../assets/sand.jpg";
+import seaTile from "../assets/sea.jpg";
 import battleMusic from "../assets/battle.mp3";
 import victoryMusic from "../assets/victory.mp3";
 import themeMusic from "../assets/theme.mp3";
@@ -84,6 +85,20 @@ const GRASS2_PATCHES = [
   { x: 6, y: 6 },
   { x: 5, y: 6 },
 ];
+
+// Sea tiles in the bottom right corner
+const SEA_PATCHES = [
+  // Row 8
+  { x: 7, y: 8 },
+  { x: 8, y: 8 },
+  { x: 9, y: 8 },
+  // Row 9
+  { x: 7, y: 9 },
+  { x: 8, y: 9 },
+  { x: 9, y: 9 },
+];
+
+// The row 7 will be sand by default, creating a beach transition between grass and sea
 
 export const Game: React.FC = () => {
   const [gameState, setGameState] = useState<GameState>({
@@ -308,6 +323,7 @@ export const Game: React.FC = () => {
         const isPlayer = gameState.playerPosition.x === x && gameState.playerPosition.y === y;
         const isBattleGrass = GRASS_PATCHES.some((patch) => patch.x === x && patch.y === y);
         const isNormalGrass = GRASS2_PATCHES.some((patch) => patch.x === x && patch.y === y);
+        const isSea = SEA_PATCHES.some((patch) => patch.x === x && patch.y === y);
         const isPokecenter = x === 1 && y === 8;
         const isHome = x === 1 && y === 1;
 
@@ -315,7 +331,8 @@ export const Game: React.FC = () => {
           <div key={`${x}-${y}`} className="cell">
             {isBattleGrass && <img src={grassTile} alt="Battle Grass" className="terrain-tile" />}
             {isNormalGrass && <img src={grass2Tile} alt="Normal Grass" className="terrain-tile" />}
-            {!isBattleGrass && !isNormalGrass && <img src={sandTile} alt="Sand" className="terrain-tile" />}
+            {isSea && <img src={seaTile} alt="Sea" className="terrain-tile" />}
+            {!isBattleGrass && !isNormalGrass && !isSea && <img src={sandTile} alt="Sand" className="terrain-tile" />}
             {isPokecenter && <img src={pokecenterImage} alt="Pokémon Center" className="pokecenter-sprite" />}
             {isHome && <img src={homeImage} alt="Home" className="home-sprite" />}
             {isPlayer && (

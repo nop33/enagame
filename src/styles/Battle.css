@@ -49,27 +49,27 @@
 }
 
 .name {
+  font-family: "Pokemon GB", monospace;
   font-size: 12px;
   color: #000;
-  font-family: "Pokemon GB", monospace;
 }
 
 .level {
+  font-family: "Pokemon GB", monospace;
   font-size: 12px;
   color: #000;
-  font-family: "Pokemon GB", monospace;
 }
 
 .health-container {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 5px;
 }
 
 .hp-label {
+  font-family: "Pokemon GB", monospace;
   font-size: 10px;
   color: #000;
-  font-family: "Pokemon GB", monospace;
 }
 
 .health-bar-inner {
@@ -85,79 +85,52 @@
   transition: width 0.3s ease;
 }
 
-.health-fill.damage-flash {
-  animation: damage-flash 0.5s ease;
-}
-
-@keyframes damage-flash {
-  0%,
-  100% {
-    background-color: #00ff00;
-  }
-  50% {
-    background-color: #ffffff;
-  }
-}
-
 .enemy-pokemon {
-  align-self: flex-end;
-  margin-top: 40px;
-  transform-origin: center;
-  position: relative;
-}
-
-.enemy-pokemon.damage-shake {
-  animation: damage-shake 0.5s ease;
-}
-
-@keyframes damage-shake {
-  0%,
-  100% {
-    transform: translateX(0) rotate(0deg);
-  }
-  25% {
-    transform: translateX(-10px) rotate(-5deg);
-  }
-  75% {
-    transform: translateX(10px) rotate(5deg);
-  }
+  position: absolute;
+  right: 50px;
+  top: 50px;
+  width: 200px;
+  height: 200px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .player-pokemon {
-  align-self: flex-start;
   position: absolute;
-  bottom: 174px;
   left: 50px;
-  z-index: 2;
-}
-
-.player-pokemon.attack-bounce {
-  animation: attack-bounce 0.5s ease;
-}
-
-@keyframes attack-bounce {
-  0%,
-  100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-20px);
-  }
+  bottom: 178px;
+  width: 400px;
+  height: 400px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .pidgey-sprite {
   width: 200px;
-  height: auto;
-  image-rendering: pixelated;
+  height: 200px;
+  object-fit: contain;
+  object-position: center;
   filter: drop-shadow(4px 4px 4px rgba(0, 0, 0, 0.4));
 }
 
 .player-back-sprite {
-  width: 300px;
-  height: auto;
-  image-rendering: pixelated;
-  transform: none;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
   filter: drop-shadow(4px 4px 4px rgba(0, 0, 0, 0.4));
+}
+
+.enemy-info {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  z-index: 2;
+  background-color: white;
+  border: 2px solid black;
+  padding: 8px 12px;
+  border-radius: 4px;
 }
 
 .battle-menu {
@@ -197,7 +170,7 @@
 }
 
 .question-box p {
-  font-size: 12px;
+  font-size: 14px;
   margin-bottom: 15px;
   line-height: 1.5;
 }
@@ -207,14 +180,13 @@
   grid-template-columns: repeat(2, 1fr);
   gap: 10px;
   margin-top: 5px;
-  padding-bottom: 10px;
 }
 
 .option-button {
   background-color: #f8f8f8;
   border: 2px solid #000;
   padding: 12px;
-  font-size: 10px;
+  font-size: 12px;
   font-family: "Pokemon GB", monospace;
   color: #000;
   cursor: pointer;
@@ -236,4 +208,49 @@
   background-color: #d8d8d8;
   transform: translate(1px, 1px);
   box-shadow: 1px 1px 0px #000;
+}
+
+.damage-flash {
+  animation: flash 0.5s;
+}
+
+@keyframes flash {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.damage-shake {
+  animation: shake 0.5s;
+}
+
+@keyframes shake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-5px);
+  }
+  75% {
+    transform: translateX(5px);
+  }
+}
+
+.attack-bounce {
+  animation: bounce 0.5s;
+}
+
+@keyframes bounce {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
 }

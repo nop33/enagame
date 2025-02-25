@@ -7,6 +7,7 @@ import enaFaintImage from "../assets/enafaint.png";
 import slapSound from "../assets/slap.mp3";
 import superSound from "../assets/super.mp3";
 import dammitSound from "../assets/dammit.mp3";
+import useTypewriter from "../hooks/useTypewriter";
 
 // Sample quiz questions
 const QUIZ_QUESTIONS = [
@@ -46,14 +47,17 @@ interface BattleProps {
 
 export const Battle: React.FC<BattleProps> = ({ onBattleEnd, playerHealth, pigeonHealth, onHealthChange }) => {
   const [currentQuestion, setCurrentQuestion] = useState(Math.floor(Math.random() * QUIZ_QUESTIONS.length));
-  const [message, setMessage] = useState<string>("");
+  const [message, setMessage] = useState("");
   const [isAttacking, setIsAttacking] = useState(false);
   const [isDamaged, setIsDamaged] = useState(false);
   const [isFainted, setIsFainted] = useState(false);
   const [isPigeonDefeated, setIsPigeonDefeated] = useState(false);
+  const [showQuestion, setShowQuestion] = useState(true);
   const slapAudioRef = useRef<HTMLAudioElement | null>(null);
   const superAudioRef = useRef<HTMLAudioElement | null>(null);
   const dammitAudioRef = useRef<HTMLAudioElement | null>(null);
+
+  const { displayedText } = useTypewriter(message || "", 30);
 
   useEffect(() => {
     // Initialize sound effects
@@ -82,12 +86,22 @@ export const Battle: React.FC<BattleProps> = ({ onBattleEnd, playerHealth, pigeo
     };
   }, []);
 
+  useEffect(() => {
+    if (message === "It's super effective!" || message === "The attack missed!") {
+      const timer = setTimeout(() => {
+        setShowQuestion(true);
+        setMessage("");
+      }, 1500);
+      return () => clearTimeout(timer);
+    }
+  }, [message]);
+
   const handleAnswer = (selectedAnswer: string) => {
+    setShowQuestion(false);
     const correct = selectedAnswer === QUIZ_QUESTIONS[currentQuestion].correctAnswer;
 
     if (correct) {
       setIsAttacking(true);
-      // Play super sound for correct answer
       if (superAudioRef.current) {
         superAudioRef.current.currentTime = 0;
         superAudioRef.current.play();
@@ -102,7 +116,7 @@ export const Battle: React.FC<BattleProps> = ({ onBattleEnd, playerHealth, pigeo
 
         if (newPigeonHealth <= 0) {
           setIsPigeonDefeated(true);
-          setMessage("Wild pigeon fainted!");
+          setMessage("Wild PIGEON fainted!");
           setTimeout(() => onBattleEnd(true), 1500);
           return;
         }
@@ -110,11 +124,9 @@ export const Battle: React.FC<BattleProps> = ({ onBattleEnd, playerHealth, pigeo
         setTimeout(() => {
           setIsAttacking(false);
           setIsDamaged(false);
-          setMessage("");
         }, 1500);
       }, 500);
     } else {
-      // Play slap sound for incorrect answer
       if (slapAudioRef.current) {
         slapAudioRef.current.currentTime = 0;
         slapAudioRef.current.play();
@@ -128,18 +140,14 @@ export const Battle: React.FC<BattleProps> = ({ onBattleEnd, playerHealth, pigeo
       if (newPlayerHealth <= 0) {
         setIsFainted(true);
         setMessage("ENA fainted...");
-        // Play dammit sound when player loses
         if (dammitAudioRef.current) {
           dammitAudioRef.current.currentTime = 0;
           dammitAudioRef.current.play();
         }
-        setTimeout(() => onBattleEnd(false), 2000);
+        // Keep the battle open for 5 seconds after losing
+        setTimeout(() => onBattleEnd(false), 5000);
         return;
       }
-
-      setTimeout(() => {
-        setMessage("");
-      }, 1500);
     }
   };
 
@@ -149,7 +157,7 @@ export const Battle: React.FC<BattleProps> = ({ onBattleEnd, playerHealth, pigeo
         <div className="enemy-section">
           <div className="enemy-info">
             <div className="name-level">
-              <span className="name">PIDGEY</span>
+              <span className="name">PIGEON</span>
               <span className="level">Lv5</span>
             </div>
             <div className="health-container">
@@ -163,7 +171,12 @@ export const Battle: React.FC<BattleProps> = ({ onBattleEnd, playerHealth, pigeo
             </div>
           </div>
           <div className={`enemy-pokemon ${isDamaged ? "damage-shake" : ""}`}>
-            <img src={isPigeonDefeated ? pigeonDeadImage : pigeonImage} alt="Pidgey" className="pidgey-sprite" />
+            <img
+              src={isPigeonDefeated ? pigeonDeadImage : pigeonImage}
+              alt="PIGEON"
+              className="PIGEON-sprite"
+              width={230}
+            />
           </div>
         </div>
 
@@ -181,15 +194,15 @@ export const Battle: React.FC<BattleProps> = ({ onBattleEnd, playerHealth, pigeo
             </div>
           </div>
           <div className={`player-pokemon ${isAttacking ? "attack-bounce" : ""}`}>
-            <img src={isFainted ? enaFaintImage : enaImage} alt="Ena" className="player-back-sprite" />
+            <img src={isFainted ? enaFaintImage : enaImage} alt="Ena" className="player-back-sprite" width={230} />
           </div>
         </div>
       </div>
 
       <div className="battle-menu">
         {message ? (
-          <div className="message-box">{message}</div>
-        ) : (
+          <div className="message-box">{displayedText}</div>
+        ) : showQuestion ? (
           <div className="question-box">
             <p>{QUIZ_QUESTIONS[currentQuestion].question}</p>
             <div className="options-grid">
@@ -200,7 +213,7 @@ export const Battle: React.FC<BattleProps> = ({ onBattleEnd, playerHealth, pigeo
               ))}
             </div>
           </div>
-        )}
+        ) : null}
       </div>
     </div>
   );
