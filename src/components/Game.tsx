@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
-import Battle from "./Battle";
+import Battle, { EnemyType } from "./Battle";
 import "../styles/Game.css";
 import characterSprite from "../assets/character.png";
 import grassTile from "../assets/grass.jpg";
@@ -22,12 +22,13 @@ interface GameState {
   playerPosition: Position;
   inBattle: boolean;
   playerHealth: number;
-  pigeonHealth: number;
+  enemyHealth: number;
   isTransitioning: boolean;
   isVictory: boolean;
   hasInteracted: boolean;
   stepsInGrass: number;
   stepsUntilBattle: number;
+  currentEnemyType: EnemyType;
 }
 
 const GRID_SIZE = 10;
@@ -107,12 +108,13 @@ export const Game: React.FC = () => {
     playerPosition: { x: 0, y: 0 },
     inBattle: false,
     playerHealth: 3,
-    pigeonHealth: 3,
+    enemyHealth: 3,
     isTransitioning: false,
     isVictory: false,
     hasInteracted: false,
     stepsInGrass: 0,
     stepsUntilBattle: 0,
+    currentEnemyType: EnemyType.PIGEON,
   });
 
   const battleAudioRef = useRef<HTMLAudioElement | null>(null);
@@ -192,6 +194,15 @@ export const Game: React.FC = () => {
   }, [gameState.isVictory]);
 
   const startBattle = () => {
+    // Randomly select an enemy type
+    const enemyTypes = Object.values(EnemyType);
+    const randomEnemyType = enemyTypes[Math.floor(Math.random() * enemyTypes.length)];
+
+    setGameState((prev) => ({
+      ...prev,
+      currentEnemyType: randomEnemyType,
+    }));
+
     setTimeout(() => {
       setGameState((prev) => ({ ...prev, isTransitioning: false, inBattle: true }));
     }, 4000);
@@ -324,7 +335,7 @@ export const Game: React.FC = () => {
           ...prev,
           inBattle: false,
           playerHealth: prev.playerHealth,
-          pigeonHealth: 3,
+          enemyHealth: 3,
           isVictory: false,
         }));
       }, 5000); // Extended to 5 seconds for victory celebration
@@ -338,18 +349,18 @@ export const Game: React.FC = () => {
         ...prev,
         inBattle: false,
         playerHealth: 3, // Heal to full health
-        pigeonHealth: 3,
+        enemyHealth: 3,
         isVictory: false,
         playerPosition: { x: 1, y: 8 }, // Teleport to Pokémon Center
       }));
     }
   };
 
-  const handleHealthChange = (playerHealth: number, pigeonHealth: number) => {
+  const handleHealthChange = (playerHealth: number, enemyHealth: number) => {
     setGameState((prev) => ({
       ...prev,
       playerHealth,
-      pigeonHealth,
+      enemyHealth,
     }));
   };
 
@@ -405,7 +416,7 @@ export const Game: React.FC = () => {
         {gameState.isTransitioning && (
           <div className="battle-transition">
             <div className="flash-overlay"></div>
-            <div className="battle-message">Wild pigeon appeared!</div>
+            <div className="battle-message">Wild {gameState.currentEnemyType} appeared!</div>
           </div>
         )}
         {gameState.inBattle && (
@@ -413,8 +424,9 @@ export const Game: React.FC = () => {
             <Battle
               onBattleEnd={handleBattleEnd}
               playerHealth={gameState.playerHealth}
-              pigeonHealth={gameState.pigeonHealth}
+              enemyHealth={gameState.enemyHealth}
               onHealthChange={handleHealthChange}
+              enemyType={gameState.currentEnemyType}
             />
           </div>
         )}

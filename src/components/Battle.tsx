@@ -2,12 +2,21 @@ import React, { useState, useRef, useEffect } from "react";
 import "../styles/Battle.css";
 import pigeonImage from "../assets/pigeon.png";
 import pigeonDeadImage from "../assets/dead.png";
+import heatImage from "../assets/heat.jpg";
+import dishesImage from "../assets/dishes.png";
 import enaImage from "../assets/ena.png";
 import enaFaintImage from "../assets/enafaint.png";
 import slapSound from "../assets/slap.mp3";
 import superSound from "../assets/super.mp3";
 import dammitSound from "../assets/dammit.mp3";
 import useTypewriter from "../hooks/useTypewriter";
+
+// Enemy types
+export enum EnemyType {
+  PIGEON = "PIGEON",
+  HEAT = "HEAD & HUMIDITY",
+  DISHES = "DIRTY DISHES",
+}
 
 // Sample quiz questions
 const QUIZ_QUESTIONS = [
@@ -31,23 +40,44 @@ const QUIZ_QUESTIONS = [
 interface BattleProps {
   onBattleEnd: (won: boolean) => void;
   playerHealth: number;
-  pigeonHealth: number;
-  onHealthChange: (player: number, pigeon: number) => void;
+  enemyHealth: number;
+  onHealthChange: (player: number, enemy: number) => void;
+  enemyType: EnemyType;
 }
 
-export const Battle: React.FC<BattleProps> = ({ onBattleEnd, playerHealth, pigeonHealth, onHealthChange }) => {
+export const Battle: React.FC<BattleProps> = ({
+  onBattleEnd,
+  playerHealth,
+  enemyHealth,
+  onHealthChange,
+  enemyType,
+}) => {
   const [currentQuestion, setCurrentQuestion] = useState(Math.floor(Math.random() * QUIZ_QUESTIONS.length));
   const [message, setMessage] = useState("");
   const [isAttacking, setIsAttacking] = useState(false);
   const [isDamaged, setIsDamaged] = useState(false);
   const [isFainted, setIsFainted] = useState(false);
-  const [isPigeonDefeated, setIsPigeonDefeated] = useState(false);
+  const [isEnemyDefeated, setIsEnemyDefeated] = useState(false);
   const [showQuestion, setShowQuestion] = useState(true);
   const slapAudioRef = useRef<HTMLAudioElement | null>(null);
   const superAudioRef = useRef<HTMLAudioElement | null>(null);
   const dammitAudioRef = useRef<HTMLAudioElement | null>(null);
 
   const { displayedText } = useTypewriter(message || "", 30);
+
+  // Get enemy image based on type
+  const getEnemyImage = () => {
+    switch (enemyType) {
+      case EnemyType.PIGEON:
+        return isEnemyDefeated ? pigeonDeadImage : pigeonImage;
+      case EnemyType.HEAT:
+        return heatImage;
+      case EnemyType.DISHES:
+        return dishesImage;
+      default:
+        return pigeonImage;
+    }
+  };
 
   useEffect(() => {
     // Initialize sound effects
@@ -99,14 +129,14 @@ export const Battle: React.FC<BattleProps> = ({ onBattleEnd, playerHealth, pigeo
       setTimeout(() => {
         setMessage("It's super effective!");
         setIsDamaged(true);
-        const newPigeonHealth = pigeonHealth - 1;
+        const newEnemyHealth = enemyHealth - 1;
         const nextQuestion = Math.floor(Math.random() * QUIZ_QUESTIONS.length);
         setCurrentQuestion(nextQuestion);
-        onHealthChange(playerHealth, newPigeonHealth);
+        onHealthChange(playerHealth, newEnemyHealth);
 
-        if (newPigeonHealth <= 0) {
-          setIsPigeonDefeated(true);
-          setMessage("Wild PIGEON fainted!");
+        if (newEnemyHealth <= 0) {
+          setIsEnemyDefeated(true);
+          setMessage(`Wild ${enemyType} fainted!`);
           setTimeout(() => onBattleEnd(true), 1500);
           return;
         }
@@ -125,7 +155,7 @@ export const Battle: React.FC<BattleProps> = ({ onBattleEnd, playerHealth, pigeo
       const newPlayerHealth = playerHealth - 1;
       const nextQuestion = Math.floor(Math.random() * QUIZ_QUESTIONS.length);
       setCurrentQuestion(nextQuestion);
-      onHealthChange(newPlayerHealth, pigeonHealth);
+      onHealthChange(newPlayerHealth, enemyHealth);
 
       if (newPlayerHealth <= 0) {
         setIsFainted(true);
@@ -147,7 +177,7 @@ export const Battle: React.FC<BattleProps> = ({ onBattleEnd, playerHealth, pigeo
         <div className="enemy-section">
           <div className="enemy-info">
             <div className="name-level">
-              <span className="name">PIGEON</span>
+              <span className="name">{enemyType}</span>
               <span className="level">Lv5</span>
             </div>
             <div className="health-container">
@@ -155,17 +185,18 @@ export const Battle: React.FC<BattleProps> = ({ onBattleEnd, playerHealth, pigeo
               <div className="health-bar-inner">
                 <div
                   className={`health-fill ${isDamaged ? "damage-flash" : ""}`}
-                  style={{ width: `${(pigeonHealth / 3) * 100}%` }}
+                  style={{ width: `${(enemyHealth / 3) * 100}%` }}
                 />
               </div>
             </div>
           </div>
           <div className={`enemy-pokemon ${isDamaged ? "damage-shake" : ""}`}>
             <img
-              src={isPigeonDefeated ? pigeonDeadImage : pigeonImage}
-              alt="PIGEON"
-              className="PIGEON-sprite"
+              src={getEnemyImage()}
+              alt={enemyType}
+              className="enemy-sprite"
               width={230}
+              style={{ objectFit: "contain" }}
             />
           </div>
         </div>
