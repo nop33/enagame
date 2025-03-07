@@ -1,0 +1,15 @@
+{
+  "image": "https://arweave.net/gm9Zx9mJZG9juuFF9Xr-OSecof39fKE7oW2o1lSsC-8/5.png",
+  "name": "Voucher #6",
+  "description": "A voucher for 1 years subscription of CapCut Pro",
+  "attributes": [
+    {
+      "trait_type": "Quantity",
+      "value": "1"
+    },
+    {
+      "trait_type": "Validity",
+      "value": "1 year"
+    }
+  ]
+}

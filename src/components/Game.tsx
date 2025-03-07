@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
-import Battle, { EnemyType } from "./Battle";
+import Battle from "../features/battle/Battle";
 import "../styles/Game.css";
 import characterSprite from "../assets/character.png";
 import characterSwimSprite from "../assets/character-swim.png";
@@ -14,10 +14,21 @@ import themeMusic from "../assets/theme.mp3";
 import pokecenterImage from "../assets/pokecenter.png";
 import healSound from "../assets/heal.mp3";
 import homeImage from "../assets/home.png";
+import pokeball1 from "../assets/pokeballs/pokeball1.png";
+import pokeball2 from "../assets/pokeballs/pokeball2.png";
+import pokeball3 from "../assets/pokeballs/pokeball3.png";
+import pokeball4 from "../assets/pokeballs/pokeball4.png";
+import pokeball5 from "../assets/pokeballs/pokeball5.png";
+import { EnemyType } from "../features/battle/battleTypes";
 
 interface Position {
   x: number;
   y: number;
+}
+
+interface Pokeball {
+  position: Position;
+  type: number; // 1-5 for different pokeball types
 }
 
 interface GameState {
@@ -32,6 +43,8 @@ interface GameState {
   stepsUntilBattle: number;
   currentEnemyType: EnemyType;
   isSwimming: boolean;
+  battlesWon: number;
+  pokeballs: Pokeball[];
 }
 
 const GRID_SIZE = 10;
@@ -72,6 +85,9 @@ const GRASS2_PATCHES = [
   // Left border
   { x: 5, y: 1 },
   { x: 5, y: 2 },
+  { x: 4, y: 2 },
+  { x: 4, y: 3 },
+  { x: 4, y: 4 },
   { x: 5, y: 3 },
   { x: 5, y: 4 },
   // Bottom border (removed overlapping coordinates in row 5)
@@ -126,6 +142,51 @@ const TREE_PATCHES = [
 
 // The row 7 will be sand by default, creating a beach transition between grass and sea
 
+// Helper function to get valid pokeball spawn positions
+const getValidPokeballPositions = () => {
+  const validPositions: Position[] = [];
+
+  // Check each cell in the grid
+  for (let y = 0; y < GRID_SIZE; y++) {
+    for (let x = 0; x < GRID_SIZE; x++) {
+      // Check if position is not in any special terrain
+      const isGrass = GRASS_PATCHES.some((patch) => patch.x === x && patch.y === y);
+      const isNormalGrass = GRASS2_PATCHES.some((patch) => patch.x === x && patch.y === y);
+      const isTree = TREE_PATCHES.some((patch) => patch.x === x && patch.y === y);
+      const isPokecenter = x === 1 && y === 8;
+      const isHome = x === 1 && y === 1;
+
+      // If it's a valid position (sand or sea), add it to valid positions
+      if (!isGrass && !isNormalGrass && !isTree && !isPokecenter && !isHome) {
+        validPositions.push({ x, y });
+      }
+    }
+  }
+
+  return validPositions;
+};
+
+// Helper function to spawn a new pokeball
+const spawnPokeball = (existingPokeballs: Pokeball[]): Pokeball | null => {
+  const validPositions = getValidPokeballPositions();
+
+  // Filter out positions that already have pokeballs
+  const availablePositions = validPositions.filter(
+    (pos) => !existingPokeballs.some((ball) => ball.position.x === pos.x && ball.position.y === pos.y)
+  );
+
+  if (availablePositions.length === 0) return null;
+
+  // Get random position and pokeball type
+  const randomPosition = availablePositions[Math.floor(Math.random() * availablePositions.length)];
+  const randomType = Math.floor(Math.random() * 5) + 1;
+
+  return {
+    position: randomPosition,
+    type: randomType,
+  };
+};
+
 export const Game: React.FC = () => {
   const [gameState, setGameState] = useState<GameState>({
     playerPosition: { x: 0, y: 0 },
@@ -139,6 +200,8 @@ export const Game: React.FC = () => {
     stepsUntilBattle: 0,
     currentEnemyType: EnemyType.PIGEON,
     isSwimming: false,
+    battlesWon: 0,
+    pokeballs: [],
   });
 
   const battleAudioRef = useRef<HTMLAudioElement | null>(null);
@@ -360,10 +423,26 @@ export const Game: React.FC = () => {
 
   const handleBattleEnd = (won: boolean) => {
     if (won) {
-      setGameState((prev) => ({
-        ...prev,
-        isVictory: true,
-      }));
+      setGameState((prev) => {
+        const newBattlesWon = prev.battlesWon + 1;
+        let newPokeballs = [...prev.pokeballs];
+
+        // Every 3 battles won, spawn a new pokeball
+        if (newBattlesWon % 1 === 0) {
+          const newPokeball = spawnPokeball(newPokeballs);
+          if (newPokeball) {
+            newPokeballs = [...newPokeballs, newPokeball];
+          }
+        }
+
+        return {
+          ...prev,
+          isVictory: true,
+          battlesWon: newBattlesWon,
+          pokeballs: newPokeballs,
+        };
+      });
+
       // Reset game state after victory celebration
       setTimeout(() => {
         if (victoryAudioRef.current) {
@@ -428,6 +507,7 @@ export const Game: React.FC = () => {
         const isTree = TREE_PATCHES.some((patch) => patch.x === x && patch.y === y);
         const isPokecenter = x === 1 && y === 8;
         const isHome = x === 1 && y === 1;
+        const pokeball = gameState.pokeballs.find((ball) => ball.position.x === x && ball.position.y === y);
 
         row.push(
           <div key={`${x}-${y}`} className="cell">
@@ -440,6 +520,13 @@ export const Game: React.FC = () => {
             )}
             {isPokecenter && <img src={pokecenterImage} alt="Pokémon Center" className="pokecenter-sprite" />}
             {isHome && <img src={homeImage} alt="Home" className="home-sprite" />}
+            {pokeball && (
+              <img
+                src={[pokeball1, pokeball2, pokeball3, pokeball4, pokeball5][pokeball.type - 1]}
+                alt={`Pokeball ${pokeball.type}`}
+                className="pokeball-sprite"
+              />
+            )}
             {isPlayer && (
               <div className="player-container">
                 <div className="player-health">

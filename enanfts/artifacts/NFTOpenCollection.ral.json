@@ -1,0 +1,154 @@
+{
+  "version": "v3.11.1",
+  "name": "NFTOpenCollection",
+  "bytecode": "0506091240264039409140a7010000000102ce0102010000000102a0000201000102010a160040cb17011601c50c7b16010201000203000816010002170216001602410e7b01030106014027d3b8b591eeb41701a00017021600b116021406414c5048000313046413006417041703160113c40de0b6b3a7640000130a2da2160240ce00160316040d1601c91705a0000d2aa10005160116025f160502010202020009d3f1ab4760b4ce02450d7b16001601a8",
+  "codeHash": "51e80758b1ce4a0c61ef825318638670edfe62f2ac1c9b5ceea17f85ee1a086f",
+  "fieldsSig": {
+    "names": [
+      "nftTemplateId",
+      "collectionUri",
+      "collectionOwner",
+      "totalSupply",
+      "__stdInterfaceId"
+    ],
+    "types": [
+      "ByteVec",
+      "ByteVec",
+      "Address",
+      "U256",
+      "ByteVec"
+    ],
+    "isMutable": [
+      false,
+      false,
+      false,
+      true,
+      false
+    ]
+  },
+  "eventsSig": [
+    {
+      "name": "Mint",
+      "fieldNames": [
+        "minter",
+        "index"
+      ],
+      "fieldTypes": [
+        "Address",
+        "U256"
+      ]
+    }
+  ],
+  "functions": [
+    {
+      "name": "getCollectionUri",
+      "paramNames": [],
+      "paramTypes": [],
+      "paramIsMutable": [],
+      "returnTypes": [
+        "ByteVec"
+      ]
+    },
+    {
+      "name": "totalSupply",
+      "paramNames": [],
+      "paramTypes": [],
+      "paramIsMutable": [],
+      "returnTypes": [
+        "U256"
+      ]
+    },
+    {
+      "name": "nftByIndex",
+      "paramNames": [
+        "index"
+      ],
+      "paramTypes": [
+        "U256"
+      ],
+      "paramIsMutable": [
+        false
+      ],
+      "returnTypes": [
+        "INFT"
+      ]
+    },
+    {
+      "name": "validateNFT",
+      "paramNames": [
+        "nftId",
+        "nftIndex"
+      ],
+      "paramTypes": [
+        "ByteVec",
+        "U256"
+      ],
+      "paramIsMutable": [
+        false,
+        false
+      ],
+      "returnTypes": []
+    },
+    {
+      "name": "mint",
+      "paramNames": [
+        "nftUri"
+      ],
+      "paramTypes": [
+        "ByteVec"
+      ],
+      "paramIsMutable": [
+        false
+      ],
+      "returnTypes": [
+        "ByteVec"
+      ]
+    },
+    {
+      "name": "withdraw",
+      "paramNames": [
+        "to",
+        "amount"
+      ],
+      "paramTypes": [
+        "Address",
+        "U256"
+      ],
+      "paramIsMutable": [
+        false,
+        false
+      ],
+      "returnTypes": []
+    }
+  ],
+  "constants": [],
+  "enums": [
+    {
+      "name": "ErrorCodes",
+      "fields": [
+        {
+          "name": "NFTNotFound",
+          "value": {
+            "type": "U256",
+            "value": "0"
+          }
+        },
+        {
+          "name": "CollectionOwnerAllowedOnly",
+          "value": {
+            "type": "U256",
+            "value": "1"
+          }
+        },
+        {
+          "name": "NFTNotPartOfCollection",
+          "value": {
+            "type": "U256",
+            "value": "2"
+          }
+        }
+      ]
+    }
+  ],
+  "stdInterfaceId": "0002"
+}

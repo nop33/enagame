@@ -1,0 +1,15 @@
+{
+  "image": "https://arweave.net/gm9Zx9mJZG9juuFF9Xr-OSecof39fKE7oW2o1lSsC-8/3.png",
+  "name": "Voucher #4",
+  "description": "A voucher for 100 Swiss gipfeli!",
+  "attributes": [
+    {
+      "trait_type": "Quantity",
+      "value": "100"
+    },
+    {
+      "trait_type": "Validity",
+      "value": "2 years"
+    }
+  ]
+}

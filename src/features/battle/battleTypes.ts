@@ -1,0 +1,6 @@
+export enum EnemyType {
+  PIGEON = "PIGEON",
+  HEAT = "HEAD & HUMIDITY",
+  DISHES = "DIRTY DISHES",
+  INCOMPETENT = "INCOMPETENT AGENCY",
+}

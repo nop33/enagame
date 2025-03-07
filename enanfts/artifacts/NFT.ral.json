@@ -1,0 +1,60 @@
+{
+  "version": "v3.11.1",
+  "name": "NFT",
+  "bytecode": "040309144022010000000102ce0002010000000203ce01ce0202010000000103d310a20164ce0202",
+  "codeHash": "6cdad267bc88a828a4486c02d67172cda550d6873e35727ef06fb3cfef538581",
+  "fieldsSig": {
+    "names": [
+      "tokenUri",
+      "collectionId",
+      "nftIndex",
+      "__stdInterfaceId"
+    ],
+    "types": [
+      "ByteVec",
+      "ByteVec",
+      "U256",
+      "ByteVec"
+    ],
+    "isMutable": [
+      false,
+      false,
+      false,
+      false
+    ]
+  },
+  "eventsSig": [],
+  "functions": [
+    {
+      "name": "getTokenUri",
+      "paramNames": [],
+      "paramTypes": [],
+      "paramIsMutable": [],
+      "returnTypes": [
+        "ByteVec"
+      ]
+    },
+    {
+      "name": "getCollectionIndex",
+      "paramNames": [],
+      "paramTypes": [],
+      "paramIsMutable": [],
+      "returnTypes": [
+        "ByteVec",
+        "U256"
+      ]
+    },
+    {
+      "name": "getNFTIndex",
+      "paramNames": [],
+      "paramTypes": [],
+      "paramIsMutable": [],
+      "returnTypes": [
+        "U256"
+      ]
+    }
+  ],
+  "constants": [],
+  "enums": [],
+  "stdInterfaceId": "0003"
+}

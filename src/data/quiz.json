@@ -1,0 +1,277 @@
+[
+  {
+    "question": "There should only be one way to load the passangers of a plane. Which one?",
+    "options": ["FIFO", "LIFO", "FINO", "FISH"],
+    "correctAnswer": 2
+  },
+  {
+    "question": "What's Ilias' biggest fear?",
+    "options": ["Snakes", "Working until 65", "Loneliness", "Being dependant on others"],
+    "correctAnswer": 4
+  },
+  {
+    "question": "In how many countries did we take photos where we both kiss each other?",
+    "options": ["4", "3", "2", "5"],
+    "correctAnswer": 1
+  },
+  {
+    "question": "What animal is Ilias' biggest dream to see?",
+    "options": ["An asian sheepshead wrasse", "A big white shark", "A blue whale", "A leafy sea dragon"],
+    "correctAnswer": 3
+  },
+  {
+    "question": "How's the alpaca in Ilias' room called?",
+    "options": ["Mr. Alpaca", "Giuseppe", "The Dude", "Hairy Potter"],
+    "correctAnswer": 3
+  },
+  {
+    "question": "If Ilias had to choose between one of this, which one would he choose?",
+    "options": ["Mousaka", "Tantamen ramen", "Pad krah pao", "Mala"],
+    "correctAnswer": 2
+  },
+  {
+    "question": "What's the name of the MVP robot at Star Wars?",
+    "options": ["R2-D2", "C-3PO", "TC-14", "R5-D4"],
+    "correctAnswer": 1
+  },
+  {
+    "question": "What used to be Ilias' favorite number when he was young?",
+    "options": ["1", "21", "7", "17"],
+    "correctAnswer": 2
+  },
+  {
+    "question": "What day of the week did we first meet?",
+    "options": ["Tuesday", "Wednesday", "Thursday", "Friday"],
+    "correctAnswer": 3
+  },
+  {
+    "question": "How long has Ilias been living in Zurich?",
+    "options": ["5 years", "6 years", "7 years", "8 years"],
+    "correctAnswer": 4
+  },
+  {
+    "question": "How many years did Ilias live in Geneva?",
+    "options": ["2 years", "3 years", "4 years", "5 years"],
+    "correctAnswer": 3
+  },
+  {
+    "question": "How many years passed from Ilias' entry to the university until he got his Bachelors?",
+    "options": ["3 years", "4 years", "5 years", "6 years"],
+    "correctAnswer": 4
+  },
+  {
+    "question": "When was the first Star Wars movie made?",
+    "options": ["1987", "1977", "1990", "1985"],
+    "correctAnswer": 2
+  },
+  {
+    "question": "What was the name of the first Star Wars movie?",
+    "options": ["A New Hope", "Clone War", "The Empire Strikes Back", ""],
+    "correctAnswer": 1
+  },
+  {
+    "question": "Which episode was the first released Star Wars movie?",
+    "options": ["Episode 1", "Episode 3", "Episode 4", "Episode 6"],
+    "correctAnswer": 3
+  },
+  {
+    "question": "What's Ilias' favorite Christmas cookie called?",
+    "options": ["Melomakarono", "Kantaifi", "Kourabies", "Baklava"],
+    "correctAnswer": 1
+  },
+  {
+    "question": "What was the first thing I noticed about you?",
+    "options": ["Your legs", "Your ugly Crooks", "Your laptop", "Your hair"],
+    "correctAnswer": 1
+  },
+  {
+    "question": "Had Ena really lost her room key card the night he slept with Ilias in Chiang Mai?",
+    "options": ["Yes", "No", "Maybe", "We will never know the truth"],
+    "correctAnswer": 4
+  },
+  {
+    "question": "Ilias had a cat. What was his name?",
+    "options": ["Kritias", "Fivos", "Alexander the Great", "Filos"],
+    "correctAnswer": 2
+  },
+  {
+    "question": "Ilias had many dogs. What was the name of his last doggo?",
+    "options": ["Kritias", "Fivos", "Alexander the Great", "Filos"],
+    "correctAnswer": 1
+  },
+  {
+    "question": "What was Ilias' most hated subject at school?",
+    "options": ["Math", "Religion", "History", "Geography"],
+    "correctAnswer": 3
+  },
+  {
+    "question": "What was Ilias' 2nd most hated subject at school?",
+    "options": ["Math", "Religion", "History", "Geography"],
+    "correctAnswer": 2
+  },
+  {
+    "question": "What's the closes village where Ilias grew up called?",
+    "options": ["Kalives", "Gerakini", "Olinthos", "Psakoudia"],
+    "correctAnswer": 2
+  },
+  {
+    "question": "For how many languages did Ilias attempt to take physical language classes?",
+    "options": ["2", "3", "4", "5"],
+    "correctAnswer": 3
+  },
+  {
+    "question": "Which Ena's body part does Ilias find very attractive?",
+    "options": ["Her legs", "Her fingers", "Her toes", "Her eyes"],
+    "correctAnswer": 2
+  },
+  {
+    "question": "What's Ilias' favorite first thing in the morning?",
+    "options": [
+      "Hearing Good Morniiiing from Ena",
+      "A blowjob",
+      "There are no favorite things in the morning",
+      "Coffee"
+    ],
+    "correctAnswer": 1
+  },
+  {
+    "question": "What's Ilias' favorite second thing in the morning?",
+    "options": [
+      "Hearing Good Morniiiing from Ena",
+      "A blowjob",
+      "There are no favorite things in the morning",
+      "Coffee"
+    ],
+    "correctAnswer": 2
+  },
+  {
+    "question": "What's Ilias' favorite third thing in the morning?",
+    "options": [
+      "Hearing Good Morniiiing from Ena",
+      "A blowjob",
+      "There are no favorite things in the morning",
+      "Coffee"
+    ],
+    "correctAnswer": 4
+  },
+  {
+    "question": "What did Ilias want to become when he was 10?",
+    "options": ["An archeologist", "An austronaut", "A Pokemon trainer", "A computer scientist"],
+    "correctAnswer": 1
+  },
+  {
+    "question": "When did Ilias move to Thessaloniki?",
+    "options": ["2007", "2008", "2009", "2010"],
+    "correctAnswer": 2
+  },
+  {
+    "question": "What was Ilias' favorite Pokemon?",
+    "options": ["Charmander", "Charizard", "Pikachu", "Totodile"],
+    "correctAnswer": 2
+  },
+  {
+    "question": "How many countries have we travelled together?",
+    "options": ["6", "7", "8", "9"],
+    "correctAnswer": 3
+  },
+  {
+    "question": "What's Ilias' brother name?",
+    "options": ["Vasilis", "Valandis", "Nick", "Alex"],
+    "correctAnswer": 1
+  },
+  {
+    "question": "What's Ilias' sister name?",
+    "options": ["Magdalena", "Magda", "Marry", "Mina"],
+    "correctAnswer": 1
+  },
+  {
+    "question": "What's Ilias' mom name?",
+    "options": ["Magdalena", "Magda", "Marry", "Mina"],
+    "correctAnswer": 4
+  },
+  {
+    "question": "How many years difference does Ilias has from his brother?",
+    "options": ["6", "7", "8", "5"],
+    "correctAnswer": 2
+  },
+  {
+    "question": "How many years difference does Ilias has from his sister?",
+    "options": ["4", "5", "6", "7"],
+    "correctAnswer": 2
+  },
+  {
+    "question": "When did Ilias move to Switzerland?",
+    "options": ["2010", "2013", "2015", "2014"],
+    "correctAnswer": 2
+  },
+  {
+    "question": "What's Ilias' favorite alcoholic drink?",
+    "options": ["Wine", "Gin", "Beer", "Prosecco"],
+    "correctAnswer": 3
+  },
+  {
+    "question": "Where does Ilias want to go with Ena?",
+    "options": ["Everywhere", "Nowhere", "Switzerland", "Singapore"],
+    "correctAnswer": 1
+  },
+  {
+    "question": "What was the name of the bar where we first kissed?",
+    "options": ["Hopf Coffee House", "Roots Rock Reggae Chaingmai", "Coffee Telling", "Babylon Bistro"],
+    "correctAnswer": 1
+  },
+  {
+    "question": "What was the date of our first kiss?",
+    "options": ["26/11", "25/11", "23/11", "27/11"],
+    "correctAnswer": 1
+  },
+  {
+    "question": "When did Ilias switch from Windows to macOS?",
+    "options": ["2012", "2010", "2013", "2015"],
+    "correctAnswer": 1
+  },
+  {
+    "question": "In which country did Ilias first live abroad?",
+    "options": ["Germany", "Switzerland", "Sweden", "Netherlands"],
+    "correctAnswer": 3
+  },
+  {
+    "question": "Which of these was NOT one of Ilias' first games on the GameBoy?",
+    "options": ["Pokemon Yellow", "Tetris", "Yoshi's Cookies", "Super Mario"],
+    "correctAnswer": 1
+  },
+  {
+    "question": "Which Pokemon game was Ilias' first Pokemon game on the GameBoy?",
+    "options": ["Pokemon Yellow", "Pokemon Red", "Pokemon Blue", "Pokemon Green"],
+    "correctAnswer": 1
+  },
+  {
+    "question": "What's one of Ilias' loved summer activity?",
+    "options": ["Beach volleyball", "Sleeping on the sand", "Drinking mojitos", "Eating ice cream"],
+    "correctAnswer": 2
+  },
+  {
+    "question": "How many software engineers does it take to change a light bulb?",
+    "options": ["None, it's a hardware problem", "1", "2", "5"],
+    "correctAnswer": 1
+  },
+  {
+    "question": "What's Ilias' biggest regret?",
+    "options": [
+      "Not buying Bitcoin in 2010",
+      "Breaking up with his ex",
+      "Leaving Greece",
+      "Not having one more ramer before leaving Japan"
+    ],
+    "correctAnswer": 1
+  },
+  {
+    "question": "What does Ilias love about Ena?",
+    "options": ["Her smile", "Her eyes", "Her fingers", "All of the above"],
+    "correctAnswer": 4
+  },
+  {
+    "question": "What's Ilias' favorite boba?",
+    "options": ["Brown sugar milk tea", "Brown sugar milk", "Ena's eyes", "Taro"],
+    "correctAnswer": 3
+  }
+]

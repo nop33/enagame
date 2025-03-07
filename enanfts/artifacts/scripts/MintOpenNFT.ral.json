@@ -1,0 +1,28 @@
+{
+  "version": "v3.11.1",
+  "name": "MintOpenNFT",
+  "bytecodeTemplate": "01010300000009b413c40de0b6b3a7640000a2{1}0d0d{0}010418",
+  "fieldsSig": {
+    "names": [
+      "nftCollectionId",
+      "uri"
+    ],
+    "types": [
+      "ByteVec",
+      "ByteVec"
+    ],
+    "isMutable": [
+      false,
+      false
+    ]
+  },
+  "functions": [
+    {
+      "name": "main",
+      "paramNames": [],
+      "paramTypes": [],
+      "paramIsMutable": [],
+      "returnTypes": []
+    }
+  ]
+}

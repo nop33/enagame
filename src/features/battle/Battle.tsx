@@ -1,46 +1,24 @@
 import React, { useState, useRef, useEffect } from "react";
-import "../styles/Battle.css";
-import pigeonImage from "../assets/pigeon.png";
-import pigeonDeadImage from "../assets/dead.png";
-import heatImage from "../assets/heat.jpg";
-import dishesImage from "../assets/dishes.png";
-import incompetentImage from "../assets/incompetent.png";
-import enaImage from "../assets/ena.png";
-import enaFaintImage from "../assets/enafaint.png";
-import slapSound from "../assets/slap.mp3";
-import superSound from "../assets/super.mp3";
-import dammitSound from "../assets/dammit.mp3";
-import useTypewriter from "../hooks/useTypewriter";
-
-// Enemy types
-export enum EnemyType {
-  PIGEON = "PIGEON",
-  HEAT = "HEAD & HUMIDITY",
-  DISHES = "DIRTY DISHES",
-  INCOMPETENT = "INCOMPETENT AGENCY",
-}
+import "./Battle.css";
+import pigeonImage from "../../assets/pigeon.png";
+import pigeonDeadImage from "../../assets/dead.png";
+import heatImage from "../../assets/heat.jpg";
+import dishesImage from "../../assets/dishes.png";
+import incompetentImage from "../../assets/incompetent.png";
+import enaImage from "../../assets/ena.png";
+import enaFaintImage from "../../assets/enafaint.png";
+import slapSound from "../../assets/slap.mp3";
+import superSound from "../../assets/super.mp3";
+import dammitSound from "../../assets/dammit.mp3";
+import useTypewriter from "../../hooks/useTypewriter";
+import { EnemyType } from "./battleTypes";
+import quizData from "../../data/quiz.json";
 
 // Constants
 const MAX_HEALTH = 3; // Maximum health for both player and enemies
 
 // Sample quiz questions
-const QUIZ_QUESTIONS = [
-  {
-    question: "What is 1 + 1?",
-    options: ["3", "4", "2", "6"],
-    correctAnswer: "2",
-  },
-  {
-    question: "What is 2 + 2?",
-    options: ["3", "4", "5", "6"],
-    correctAnswer: "4",
-  },
-  {
-    question: "What is 3 + 3?",
-    options: ["3", "4", "5", "6"],
-    correctAnswer: "6",
-  },
-];
+const QUIZ_QUESTIONS = quizData;
 
 // Damage messages based on damage amount
 const DAMAGE_MESSAGES = {
@@ -84,7 +62,7 @@ export const Battle: React.FC<BattleProps> = ({
   onHealthChange,
   enemyType,
 }) => {
-  const [currentQuestion, setCurrentQuestion] = useState(Math.floor(Math.random() * QUIZ_QUESTIONS.length));
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(Math.floor(Math.random() * QUIZ_QUESTIONS.length));
   const [message, setMessage] = useState("");
   const [isAttacking, setIsAttacking] = useState(false);
   const [isDamaged, setIsDamaged] = useState(false);
@@ -94,6 +72,8 @@ export const Battle: React.FC<BattleProps> = ({
   const slapAudioRef = useRef<HTMLAudioElement | null>(null);
   const superAudioRef = useRef<HTMLAudioElement | null>(null);
   const dammitAudioRef = useRef<HTMLAudioElement | null>(null);
+
+  const currentQuestion = QUIZ_QUESTIONS[currentQuestionIndex];
 
   const { displayedText } = useTypewriter(message || "", 30);
 
@@ -113,10 +93,9 @@ export const Battle: React.FC<BattleProps> = ({
     }
   };
 
-  // Generate random damage between 0.5 and 1.5
+  // Generate random damage between 1 and 2
   const getRandomDamage = () => {
-    // Generate a value between 0.5 and 1.5
-    return Math.random() + 0.5;
+    return Math.random() + 0.8;
   };
 
   // Get damage message based on damage amount
@@ -176,7 +155,8 @@ export const Battle: React.FC<BattleProps> = ({
 
   const handleAnswer = (selectedAnswer: string) => {
     setShowQuestion(false);
-    const correct = selectedAnswer === QUIZ_QUESTIONS[currentQuestion].correctAnswer;
+    const correct =
+      currentQuestion.options.findIndex((option) => option === selectedAnswer) === currentQuestion.correctAnswer - 1;
 
     if (correct) {
       setIsAttacking(true);
@@ -197,7 +177,7 @@ export const Battle: React.FC<BattleProps> = ({
         // Calculate new enemy health
         const newEnemyHealth = Math.max(0, enemyHealth - damage);
         const nextQuestion = Math.floor(Math.random() * QUIZ_QUESTIONS.length);
-        setCurrentQuestion(nextQuestion);
+        setCurrentQuestionIndex(nextQuestion);
         onHealthChange(playerHealth, newEnemyHealth);
 
         if (newEnemyHealth <= 0) {
@@ -231,7 +211,7 @@ export const Battle: React.FC<BattleProps> = ({
       // Calculate new player health
       const newPlayerHealth = Math.max(0, playerHealth - damage);
       const nextQuestion = Math.floor(Math.random() * QUIZ_QUESTIONS.length);
-      setCurrentQuestion(nextQuestion);
+      setCurrentQuestionIndex(nextQuestion);
       onHealthChange(newPlayerHealth, enemyHealth);
 
       if (newPlayerHealth <= 0) {
@@ -303,9 +283,9 @@ export const Battle: React.FC<BattleProps> = ({
           <div className="message-box">{displayedText}</div>
         ) : showQuestion && !isEnemyDefeated && !isFainted ? (
           <div className="question-box">
-            <p>{QUIZ_QUESTIONS[currentQuestion].question}</p>
+            <p>{QUIZ_QUESTIONS[currentQuestionIndex].question}</p>
             <div className="options-grid">
-              {QUIZ_QUESTIONS[currentQuestion].options.map((option) => (
+              {QUIZ_QUESTIONS[currentQuestionIndex].options.map((option) => (
                 <button key={option} onClick={() => handleAnswer(option)} className="option-button">
                   {option}
                 </button>

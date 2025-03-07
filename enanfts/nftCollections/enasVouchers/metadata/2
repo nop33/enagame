@@ -1,0 +1,15 @@
+{
+  "image": "https://arweave.net/gm9Zx9mJZG9juuFF9Xr-OSecof39fKE7oW2o1lSsC-8/2.png",
+  "name": "Voucher #3",
+  "description": "A voucher for a kiss in an epic location of your choice.",
+  "attributes": [
+    {
+      "trait_type": "Quantity",
+      "value": "1"
+    },
+    {
+      "trait_type": "Validity",
+      "value": "2 years"
+    }
+  ]
+}

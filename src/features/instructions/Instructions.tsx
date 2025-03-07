@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import "../styles/Instructions.css";
-import arrowKeys from "../assets/arrows.png";
+import "./Instructions.css";
+import arrowKeys from "../../assets/arrows.png";
 
 const Instructions: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
