@@ -22,6 +22,7 @@ import pokeball5 from "../assets/pokeballs/pokeball5.png";
 import { EnemyType } from "../features/battle/battleTypes";
 import { useWallet } from "@alephium/web3-react";
 import MintButton from "../features/mint/MintButton";
+import PasswordScreen from "./PasswordScreen";
 
 interface Position {
   x: number;
@@ -49,6 +50,8 @@ interface GameState {
   pokeballs: Pokeball[];
   showPokeballMessage: boolean;
   mintedNfts: string[];
+  isPasswordValidated: boolean;
+  isTestMode: boolean;
 }
 
 const GRID_SIZE = 10;
@@ -251,6 +254,13 @@ export const Game: React.FC = () => {
       const saved = localStorage.getItem("minted-nfts");
       return saved ? JSON.parse(saved) : [];
     })(),
+    isPasswordValidated: (() => {
+      const validation = localStorage.getItem("game-password-validated");
+      return validation === "true" || validation === "test";
+    })(),
+    isTestMode: (() => {
+      return localStorage.getItem("game-password-validated") === "test";
+    })(),
   });
 
   const battleAudioRef = useRef<HTMLAudioElement | null>(null);
@@ -259,41 +269,45 @@ export const Game: React.FC = () => {
   const healAudioRef = useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
-    // Initialize audio elements
-    battleAudioRef.current = new Audio(battleMusic);
-    battleAudioRef.current.loop = true;
+    if (gameState.isPasswordValidated) {
+      // Initialize audio elements
+      battleAudioRef.current = new Audio(battleMusic);
+      battleAudioRef.current.loop = true;
 
-    victoryAudioRef.current = new Audio(victoryMusic);
-    victoryAudioRef.current.loop = false;
+      victoryAudioRef.current = new Audio(victoryMusic);
+      victoryAudioRef.current.loop = false;
 
-    themeAudioRef.current = new Audio(themeMusic);
-    themeAudioRef.current.loop = true;
-    themeAudioRef.current.volume = 0.7;
+      themeAudioRef.current = new Audio(themeMusic);
+      themeAudioRef.current.loop = true;
+      themeAudioRef.current.volume = 0.7;
+      // Start playing theme music immediately after password validation
+      themeAudioRef.current.play();
 
-    healAudioRef.current = new Audio(healSound);
-    healAudioRef.current.loop = false;
-    healAudioRef.current.volume = 0.7;
+      healAudioRef.current = new Audio(healSound);
+      healAudioRef.current.loop = false;
+      healAudioRef.current.volume = 0.7;
 
-    return () => {
-      // Cleanup audio on component unmount
-      if (battleAudioRef.current) {
-        battleAudioRef.current.pause();
-        battleAudioRef.current = null;
-      }
-      if (victoryAudioRef.current) {
-        victoryAudioRef.current.pause();
-        victoryAudioRef.current = null;
-      }
-      if (themeAudioRef.current) {
-        themeAudioRef.current.pause();
-        themeAudioRef.current = null;
-      }
-      if (healAudioRef.current) {
-        healAudioRef.current.pause();
-        healAudioRef.current = null;
-      }
-    };
-  }, []);
+      return () => {
+        // Cleanup audio on component unmount or when password becomes invalid
+        if (battleAudioRef.current) {
+          battleAudioRef.current.pause();
+          battleAudioRef.current = null;
+        }
+        if (victoryAudioRef.current) {
+          victoryAudioRef.current.pause();
+          victoryAudioRef.current = null;
+        }
+        if (themeAudioRef.current) {
+          themeAudioRef.current.pause();
+          themeAudioRef.current = null;
+        }
+        if (healAudioRef.current) {
+          healAudioRef.current.pause();
+          healAudioRef.current = null;
+        }
+      };
+    }
+  }, [gameState.isPasswordValidated]);
 
   useEffect(() => {
     // Handle battle music - start playing during transition and battle
@@ -616,50 +630,62 @@ export const Game: React.FC = () => {
 
   return (
     <div className="game-container">
-      <div className="game-wrapper">
-        <div className="game-grid">{renderGrid()}</div>
-        {gameState.isTransitioning && (
-          <div className="battle-transition">
-            <div className="flash-overlay"></div>
-            <div className="battle-message">Wild {gameState.currentEnemyType} appeared!</div>
-          </div>
-        )}
-        {gameState.inBattle && (
-          <div className="battle-overlay">
-            <Battle
-              onBattleEnd={handleBattleEnd}
-              playerHealth={gameState.playerHealth}
-              enemyHealth={gameState.enemyHealth}
-              onHealthChange={handleHealthChange}
-              enemyType={gameState.currentEnemyType}
-            />
-          </div>
-        )}
-        {gameState.showPokeballMessage && (
-          <div className="message-overlay">
-            <TypewriterMessage
-              mintedNfts={gameState.mintedNfts}
-              onNftMinted={(nftUrl) => {
-                setGameState((prev) => ({
-                  ...prev,
-                  mintedNfts: [...prev.mintedNfts, nftUrl],
-                }));
-              }}
-              onMintClick={() => {
-                // Close the message
-                setGameState((prev) => ({
-                  ...prev,
-                  showPokeballMessage: false,
-                  // Remove the pokeball at the player's current position
-                  pokeballs: prev.pokeballs.filter(
-                    (ball) => ball.position.x !== prev.playerPosition.x || ball.position.y !== prev.playerPosition.y
-                  ),
-                }));
-              }}
-            />
-          </div>
-        )}
-      </div>
+      {!gameState.isPasswordValidated ? (
+        <PasswordScreen
+          onPasswordCorrect={(isTestMode) => {
+            setGameState((prev) => ({
+              ...prev,
+              isPasswordValidated: true,
+              isTestMode: isTestMode,
+            }));
+          }}
+        />
+      ) : (
+        <div className="game-wrapper">
+          <div className="game-grid">{renderGrid()}</div>
+          {gameState.isTransitioning && (
+            <div className="battle-transition">
+              <div className="flash-overlay"></div>
+              <div className="battle-message">Wild {gameState.currentEnemyType} appeared!</div>
+            </div>
+          )}
+          {gameState.inBattle && (
+            <div className="battle-overlay">
+              <Battle
+                onBattleEnd={handleBattleEnd}
+                playerHealth={gameState.playerHealth}
+                enemyHealth={gameState.enemyHealth}
+                onHealthChange={handleHealthChange}
+                enemyType={gameState.currentEnemyType}
+                isTestMode={gameState.isTestMode}
+              />
+            </div>
+          )}
+          {gameState.showPokeballMessage && !gameState.isTestMode && (
+            <div className="message-overlay">
+              <TypewriterMessage
+                mintedNfts={gameState.mintedNfts}
+                onNftMinted={(nftUrl) => {
+                  setGameState((prev) => ({
+                    ...prev,
+                    mintedNfts: [...prev.mintedNfts, nftUrl],
+                  }));
+                }}
+                onMintClick={() => {
+                  setGameState((prev) => ({
+                    ...prev,
+                    showPokeballMessage: false,
+                    pokeballs: prev.pokeballs.filter(
+                      (ball) => ball.position.x !== prev.playerPosition.x || ball.position.y !== prev.playerPosition.y
+                    ),
+                  }));
+                }}
+              />
+            </div>
+          )}
+          {gameState.isTestMode && <div className="test-mode-indicator">Test Mode</div>}
+        </div>
+      )}
     </div>
   );
 };

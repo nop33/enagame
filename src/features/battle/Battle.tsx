@@ -17,8 +17,29 @@ import quizData from "../../data/quiz.json";
 // Constants
 const MAX_HEALTH = 3; // Maximum health for both player and enemies
 
-// Sample quiz questions
-const QUIZ_QUESTIONS = quizData;
+// Example questions for test mode
+const TEST_QUESTIONS = [
+  {
+    question: "What is this game?",
+    options: ["A Pokemon game", "A test game", "A quiz game", "All of the above"],
+    correctAnswer: 4,
+  },
+  {
+    question: "What happens in test mode?",
+    options: [
+      "NFT minting is disabled",
+      "Example questions are shown",
+      "Test mode indicator is visible",
+      "All of the above",
+    ],
+    correctAnswer: 4,
+  },
+  {
+    question: "Is this a test question?",
+    options: ["Yes", "No", "Maybe", "All of the above"],
+    correctAnswer: 1,
+  },
+];
 
 // Damage messages based on damage amount
 const DAMAGE_MESSAGES = {
@@ -53,6 +74,7 @@ interface BattleProps {
   enemyHealth: number;
   onHealthChange: (player: number, enemy: number) => void;
   enemyType: EnemyType;
+  isTestMode: boolean;
 }
 
 export const Battle: React.FC<BattleProps> = ({
@@ -61,7 +83,9 @@ export const Battle: React.FC<BattleProps> = ({
   enemyHealth,
   onHealthChange,
   enemyType,
+  isTestMode,
 }) => {
+  const QUIZ_QUESTIONS = isTestMode ? TEST_QUESTIONS : quizData;
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(Math.floor(Math.random() * QUIZ_QUESTIONS.length));
   const [message, setMessage] = useState("");
   const [isAttacking, setIsAttacking] = useState(false);
@@ -165,16 +189,13 @@ export const Battle: React.FC<BattleProps> = ({
         superAudioRef.current.play();
       }
       setTimeout(() => {
-        // Calculate random damage (between 0.5 and 1.5)
         const damageMultiplier = getRandomDamage();
-        // Scale damage to ensure enemy dies in about 3 hits
         const damage = damageMultiplier;
         const damageMessage = getDamageMessage(damageMultiplier);
 
         setMessage(damageMessage);
         setIsDamaged(true);
 
-        // Calculate new enemy health
         const newEnemyHealth = Math.max(0, enemyHealth - damage);
         const nextQuestion = Math.floor(Math.random() * QUIZ_QUESTIONS.length);
         setCurrentQuestionIndex(nextQuestion);
@@ -183,7 +204,6 @@ export const Battle: React.FC<BattleProps> = ({
         if (newEnemyHealth <= 0) {
           setIsEnemyDefeated(true);
           setMessage(`Wild ${enemyType} fainted!`);
-          // Don't show new questions after enemy faints
           setShowQuestion(false);
           setTimeout(() => onBattleEnd(true), 3000);
           return;

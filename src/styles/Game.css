@@ -339,3 +339,29 @@
     transform: translateY(0);
   }
 }
+
+.test-mode-indicator {
+  position: fixed;
+  top: 10px;
+  right: 10px;
+  background-color: #ff4444;
+  color: white;
+  padding: 5px 10px;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  font-family: "Pokemon GB", monospace;
+  z-index: 1000;
+}
+
+.test-mode-battle-indicator {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background-color: #ff4444;
+  color: white;
+  padding: 5px 10px;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  font-family: "Pokemon GB", monospace;
+  z-index: 1000;
+}
