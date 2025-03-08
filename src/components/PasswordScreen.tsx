@@ -13,7 +13,7 @@ const PasswordScreen: React.FC<PasswordScreenProps> = ({ onPasswordCorrect }) =>
     e.preventDefault();
     if (password === "test") {
       onPasswordCorrect(true); // Enter test mode
-      localStorage.setItem("game-password-validated", "test");
+      // localStorage.setItem("game-password-validated", "test");
     } else if (password === "pookie") {
       onPasswordCorrect(false); // Enter normal mode
       localStorage.setItem("game-password-validated", "true");
