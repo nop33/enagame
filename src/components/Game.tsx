@@ -441,7 +441,7 @@ export const Game: React.FC = () => {
         }
 
         // If player is still in tall grass, increment step counter
-        if (isInBattleGrass && wasInBattleGrass) {
+        if (isInBattleGrass && wasInBattleGrass && !gameState.isTestMode) {
           const newStepsInGrass = prev.stepsInGrass + 1;
 
           // Check if we've reached the required number of steps for a battle
