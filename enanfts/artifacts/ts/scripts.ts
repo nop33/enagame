@@ -2,31 +2,20 @@
 /* tslint:disable */
 /* eslint-disable */
 
-import {
-  Address,
-  ExecutableScript,
-  ExecuteScriptParams,
-  ExecuteScriptResult,
-  Script,
-  SignerProvider,
-  HexString,
-} from "@alephium/web3";
-import { getContractByCodeHash } from "./contracts";
-import { default as CreateOpenCollectionScriptJson } from "../scripts/CreateOpenCollection.ral.json";
-import { default as MintOpenNFTScriptJson } from "../scripts/MintOpenNFT.ral.json";
+import { Address, ExecutableScript, Script, HexString } from '@alephium/web3'
+import { getContractByCodeHash } from './contracts'
+import { default as CreateOpenCollectionScriptJson } from '../scripts/CreateOpenCollection.ral.json'
+import { default as MintOpenNFTScriptJson } from '../scripts/MintOpenNFT.ral.json'
 
 export const CreateOpenCollection = new ExecutableScript<{
-  openCollectionTemplateId: HexString;
-  nftTemplateId: HexString;
-  collectionUri: HexString;
-  collectionOwner: Address;
-  totalSupply: bigint;
-}>(
-  Script.fromJson(CreateOpenCollectionScriptJson, "", []),
-  getContractByCodeHash
-);
+  openCollectionTemplateId: HexString
+  nftTemplateId: HexString
+  collectionUri: HexString
+  collectionOwner: Address
+  totalSupply: bigint
+}>(Script.fromJson(CreateOpenCollectionScriptJson, '', []), getContractByCodeHash)
 
 export const MintOpenNFT = new ExecutableScript<{
-  nftCollectionId: HexString;
-  uri: HexString;
-}>(Script.fromJson(MintOpenNFTScriptJson, "", []), getContractByCodeHash);
+  nftCollectionId: HexString
+  uri: HexString
+}>(Script.fromJson(MintOpenNFTScriptJson, '', []), getContractByCodeHash)
