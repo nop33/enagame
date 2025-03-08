@@ -20,6 +20,8 @@ import pokeball3 from "../assets/pokeballs/pokeball3.png";
 import pokeball4 from "../assets/pokeballs/pokeball4.png";
 import pokeball5 from "../assets/pokeballs/pokeball5.png";
 import { EnemyType } from "../features/battle/battleTypes";
+import { useWallet } from "@alephium/web3-react";
+import MintButton from "../features/mint/MintButton";
 
 interface Position {
   x: number;
@@ -45,6 +47,8 @@ interface GameState {
   isSwimming: boolean;
   battlesWon: number;
   pokeballs: Pokeball[];
+  showPokeballMessage: boolean;
+  mintedNfts: string[];
 }
 
 const GRID_SIZE = 10;
@@ -187,6 +191,46 @@ const spawnPokeball = (existingPokeballs: Pokeball[]): Pokeball | null => {
   };
 };
 
+const TypewriterMessage: React.FC<{
+  onComplete?: () => void;
+  onMintClick: () => void;
+  mintedNfts: string[];
+  onNftMinted: (nftUrl: string) => void;
+}> = ({ onComplete, onMintClick, mintedNfts, onNftMinted }) => {
+  const [displayText, setDisplayText] = useState("");
+  const { signer } = useWallet();
+
+  const fullMessage = signer
+    ? "Congratulations, you found a gift!"
+    : "Congratulations, you found a gift! Connect your Alephium mobile wallet using the button on the top right of the screen (using WalletConnect) and claim your gift NFT!";
+  const messageSpeed = 40; // Speed of typing in milliseconds
+
+  useEffect(() => {
+    let currentChar = 0;
+    const timer = setInterval(() => {
+      if (currentChar < fullMessage.length) {
+        setDisplayText(fullMessage.slice(0, currentChar + 1));
+        currentChar++;
+      } else {
+        clearInterval(timer);
+        if (onComplete) {
+          onComplete();
+        }
+      }
+    }, messageSpeed);
+
+    return () => clearInterval(timer);
+  }, [fullMessage, onComplete, signer]);
+
+  return (
+    <div className="typewriter-message">
+      {displayText} <br />
+      <br />
+      <MintButton onMintClick={onMintClick} mintedNfts={mintedNfts} onNftMinted={onNftMinted} />
+    </div>
+  );
+};
+
 export const Game: React.FC = () => {
   const [gameState, setGameState] = useState<GameState>({
     playerPosition: { x: 0, y: 0 },
@@ -202,6 +246,11 @@ export const Game: React.FC = () => {
     isSwimming: false,
     battlesWon: 0,
     pokeballs: [],
+    showPokeballMessage: false,
+    mintedNfts: (() => {
+      const saved = localStorage.getItem("minted-nfts");
+      return saved ? JSON.parse(saved) : [];
+    })(),
   });
 
   const battleAudioRef = useRef<HTMLAudioElement | null>(null);
@@ -411,10 +460,16 @@ export const Game: React.FC = () => {
           };
         }
 
+        // Check if player is on a pokeball
+        const isOnPokeball = prev.pokeballs.some(
+          (ball) => ball.position.x === newPosition.x && ball.position.y === newPosition.y
+        );
+
         return {
           ...prev,
           playerPosition: newPosition,
-          isSwimming: isSea, // Set swimming state based on if they're in sea
+          isSwimming: isSea,
+          showPokeballMessage: isOnPokeball, // Set message visibility based on pokeball position
         };
       });
     },
@@ -428,7 +483,7 @@ export const Game: React.FC = () => {
         let newPokeballs = [...prev.pokeballs];
 
         // Every 3 battles won, spawn a new pokeball
-        if (newBattlesWon % 1 === 0) {
+        if (newBattlesWon % 3 === 0) {
           const newPokeball = spawnPokeball(newPokeballs);
           if (newPokeball) {
             newPokeballs = [...newPokeballs, newPokeball];
@@ -554,6 +609,11 @@ export const Game: React.FC = () => {
     return grid;
   };
 
+  // Add localStorage effect for mintedNfts
+  useEffect(() => {
+    localStorage.setItem("minted-nfts", JSON.stringify(gameState.mintedNfts));
+  }, [gameState.mintedNfts]);
+
   return (
     <div className="game-container">
       <div className="game-wrapper">
@@ -572,6 +632,30 @@ export const Game: React.FC = () => {
               enemyHealth={gameState.enemyHealth}
               onHealthChange={handleHealthChange}
               enemyType={gameState.currentEnemyType}
+            />
+          </div>
+        )}
+        {gameState.showPokeballMessage && (
+          <div className="message-overlay">
+            <TypewriterMessage
+              mintedNfts={gameState.mintedNfts}
+              onNftMinted={(nftUrl) => {
+                setGameState((prev) => ({
+                  ...prev,
+                  mintedNfts: [...prev.mintedNfts, nftUrl],
+                }));
+              }}
+              onMintClick={() => {
+                // Close the message
+                setGameState((prev) => ({
+                  ...prev,
+                  showPokeballMessage: false,
+                  // Remove the pokeball at the player's current position
+                  pokeballs: prev.pokeballs.filter(
+                    (ball) => ball.position.x !== prev.playerPosition.x || ball.position.y !== prev.playerPosition.y
+                  ),
+                }));
+              }}
             />
           </div>
         )}

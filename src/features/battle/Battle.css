@@ -16,7 +16,7 @@
   flex-direction: column;
   justify-content: space-between;
   min-height: 400px;
-  padding-bottom: 180px;
+  padding-bottom: 220px;
 }
 
 .enemy-section {
@@ -135,8 +135,8 @@
 }
 
 .battle-menu {
-  height: 180px;
-  min-height: 180px;
+  height: 220px;
+  min-height: 220px;
   background-color: #f8f8f8;
   border-top: 4px solid #000;
   padding: 15px 20px;
