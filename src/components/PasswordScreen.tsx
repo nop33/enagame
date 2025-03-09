@@ -39,6 +39,7 @@ const PasswordScreen: React.FC<PasswordScreenProps> = ({ onPasswordCorrect }) =>
             Submit
           </button>
         </form>
+        <p className="test-message">Enter "test" to check out the game in test mode.</p>
         {error && <p className="error-message">{error}</p>}
       </div>
     </div>
