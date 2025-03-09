@@ -119,7 +119,7 @@ export const Battle: React.FC<BattleProps> = ({
 
   // Generate random damage between 1 and 2
   const getRandomDamage = () => {
-    return Math.random() + 0.8;
+    return Math.random() + 100;
   };
 
   // Get damage message based on damage amount

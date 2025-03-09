@@ -22,6 +22,7 @@ async function nonFungibleToken() {
   })
 
   console.log(`NFT Collection address: ${nftCollection.address}`)
+  console.log(`NFT Collection contractId: ${nftCollection.contractId}`)
 }
 
 nonFungibleToken()

@@ -8,9 +8,16 @@ Abstract Contract NFTOpenCollectionBase(
 ) extends NFTCollectionBase(collectionUri, collectionOwner, totalSupply) {
     event Mint(minter: Address, index: U256)
 
+    enum ErrorCodes {
+        MaxSupplyReached = 0
+    }
+
     @using(preapprovedAssets = true, updateFields = true, checkExternalCaller = false)
     pub fn mint(nftUri: ByteVec) -> (ByteVec) {
         let minter = callerAddress!()
+
+        // Ensure we haven't reached max supply
+        assert!(totalSupply < 7, ErrorCodes.MaxSupplyReached)
 
         // checkCaller!(minter == collectionOwner, ErrorCodes.CollectionOwnerAllowedOnly)
 
@@ -30,9 +37,6 @@ Abstract Contract NFTOpenCollectionBase(
         totalSupply = totalSupply + 1
 
         emit Mint(minter, nftIndex)
-
-        // Is this what I should call to transfer the token to the minter?
-        // transferTokenFromSelf!(minter, contractId, 1)
 
         return contractId
     }

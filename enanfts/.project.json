@@ -11,12 +11,6 @@
     "skipAbstractContractCheck": false
   },
   "infos": {
-    "CreateOpenCollection": {
-      "sourceFile": "scripts/create_open_collection.ral",
-      "sourceCodeHash": "e609f0e40684432fb1d47f5a4ca1806c6eec26d9b7eae119a5819ddace916547",
-      "bytecodeDebugPatch": "",
-      "codeHashDebug": ""
-    },
     "INFT": {
       "sourceFile": "../node_modules/.pnpm/@alephium+cli@1.11.5_@types+node@16.18.126_ts-node@10.9.2_@swc+core@1.11.1_@types+node@16.18.126_typescript@4.9.5_/node_modules/@alephium/web3/std/nft_interface.ral",
       "sourceCodeHash": "92956f4e61c198f011b48dbda2ed76193ffc79ac9c39f60bf1763a34e02f2c41",
@@ -26,12 +20,6 @@
     "INFTCollection": {
       "sourceFile": "../node_modules/.pnpm/@alephium+cli@1.11.5_@types+node@16.18.126_ts-node@10.9.2_@swc+core@1.11.1_@types+node@16.18.126_typescript@4.9.5_/node_modules/@alephium/web3/std/nft_collection_interface.ral",
       "sourceCodeHash": "9b199426ea89c188ce858b48ab809f13b9fc1ed0d64ca91e3d600eda8fbf6c42",
-      "bytecodeDebugPatch": "",
-      "codeHashDebug": ""
-    },
-    "MintOpenNFT": {
-      "sourceFile": "scripts/mint_open_nft.ral",
-      "sourceCodeHash": "d62182c925180b84dd34039c85c660970eb7193b5234653f29d4710bcfdad23f",
       "bytecodeDebugPatch": "",
       "codeHashDebug": ""
     },
@@ -51,11 +39,11 @@
       "sourceFile": "nft_open_collection.ral",
       "sourceCodeHash": "db0f6a2cc27e735bff53dff47aa8f1af2a041fd595252c4a0a9c0f8bf968400a",
       "bytecodeDebugPatch": "",
-      "codeHashDebug": "51e80758b1ce4a0c61ef825318638670edfe62f2ac1c9b5ceea17f85ee1a086f"
+      "codeHashDebug": "2fee94e27400336b5208ee3b544480466bb12397c0a67e7a90d432b31e6a62e3"
     },
     "NFTOpenCollectionBase": {
       "sourceFile": "nft_open_collection_base.ral",
-      "sourceCodeHash": "e4225b97191759ade0bfe0c57b4a4c783b184ea8bc5c8df616fcd82745d43a0c",
+      "sourceCodeHash": "c7a5113e85320118bf2ff89237efa48a59c1353800d695d72e925b04532a307e",
       "bytecodeDebugPatch": "",
       "codeHashDebug": ""
     }

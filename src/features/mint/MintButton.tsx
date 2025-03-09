@@ -4,6 +4,7 @@ import { ONE_ALPH } from "@alephium/web3";
 import { useWallet } from "@alephium/web3-react";
 import { NFTOpenCollection } from "../../../enanfts/artifacts/ts";
 import nftUrls from "../../data/nfts.json";
+import { NFT_COLLECTION_ADDRESS } from "../../constants";
 
 const MintButton = ({
   onMintClick,
@@ -20,7 +21,7 @@ const MintButton = ({
 
   const handleMint = async () => {
     console.log("Minting NFT...");
-    const nftCollection = NFTOpenCollection.at("23yHMf3fAxiBfArV5WaW9SNFAPqmpngSV9jzAJRjBYzST");
+    const nftCollection = NFTOpenCollection.at(NFT_COLLECTION_ADDRESS);
 
     // Filter out already minted NFTs
     const availableNfts = nftUrls.filter((url) => !mintedNfts.includes(url));

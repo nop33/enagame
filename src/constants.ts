@@ -1,0 +1,4 @@
+export const NFT_COLLECTION_CONTRACT_ID = "2ab5293412c2f80b07a6dc703c4fd8112f33c98db7825f6d1abb8a90565ee600";
+export const NFT_COLLECTION_ADDRESS = "wZfTP7g1nA2vTaX32QNpNoor3tJfSn4MgdC9sMNhz4ET";
+export const MAX_SUPPLY = 7;
+export const NODE_URL = "http://127.0.0.1:22973";

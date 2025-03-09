@@ -23,6 +23,7 @@ import { EnemyType } from "../features/battle/battleTypes";
 import { useWallet } from "@alephium/web3-react";
 import MintButton from "../features/mint/MintButton";
 import PasswordScreen from "./PasswordScreen";
+import useTotalMints from "../features/mint/useTotalMints";
 
 interface Position {
   x: number;
@@ -235,6 +236,7 @@ const TypewriterMessage: React.FC<{
 };
 
 export const Game: React.FC = () => {
+  const { allNFTsMinted } = useTotalMints();
   const [gameState, setGameState] = useState<GameState>({
     playerPosition: { x: 0, y: 0 },
     inBattle: false,
@@ -497,7 +499,7 @@ export const Game: React.FC = () => {
         let newPokeballs = [...prev.pokeballs];
 
         // Every 3 battles won, spawn a new pokeball
-        if (newBattlesWon % 3 === 0) {
+        if (newBattlesWon % 1 === 0 && !allNFTsMinted) {
           const newPokeball = spawnPokeball(newPokeballs);
           if (newPokeball) {
             newPokeballs = [...newPokeballs, newPokeball];
