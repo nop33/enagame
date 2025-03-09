@@ -5,11 +5,18 @@ import Instructions from "./features/instructions/Instructions";
 import { useEffect, useState } from "react";
 import Confetti from "react-confetti";
 import useTotalMints from "./features/mint/useTotalMints";
-import { MAX_SUPPLY } from "./constants";
+import { MAX_SUPPLY, NETWORK } from "./constants";
+import quizData from "./data/quiz.json";
+import DeployButton from "./features/deploy/DeployButton";
+
 function App() {
   const { totalSupply, allNFTsMinted } = useTotalMints();
-
   const [showCongrats, setShowCongrats] = useState(true);
+  const [remainingQuestions, setRemainingQuestions] = useState(() => {
+    const answeredQuestions = JSON.parse(localStorage.getItem("correctly-answered-questions") || "[]");
+    return quizData.length - answeredQuestions.length;
+  });
+
   const [windowSize, setWindowSize] = useState({
     width: window.innerWidth,
     height: window.innerHeight,
@@ -27,8 +34,15 @@ function App() {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
+  const handleQuestionAnswered = (questionIndex: number, correct: boolean) => {
+    if (correct) {
+      const answeredQuestions = JSON.parse(localStorage.getItem("correctly-answered-questions") || "[]");
+      setRemainingQuestions(quizData.length - answeredQuestions.length);
+    }
+  };
+
   return (
-    <AlephiumWalletProvider network="devnet">
+    <AlephiumWalletProvider network={NETWORK} addressGroup={0}>
       <div className="app">
         {allNFTsMinted && showCongrats && (
           <>
@@ -51,13 +65,18 @@ function App() {
         <div className="connect-button-wrapper">
           <AlephiumConnectButton />
 
+          {/* <DeployButton /> */}
+
           <div className="total-supply">
             Gifts found: {totalSupply || 0} / {MAX_SUPPLY}{" "}
             {allNFTsMinted && <span className="total-supply-complete">🎉</span>}
           </div>
+          <div className="remaining-questions">
+            Questions answered: {quizData.length - remainingQuestions} / {quizData.length}
+          </div>
         </div>
         <Instructions />
-        <Game />
+        <Game onQuestionAnswered={handleQuestionAnswered} />
       </div>
     </AlephiumWalletProvider>
   );

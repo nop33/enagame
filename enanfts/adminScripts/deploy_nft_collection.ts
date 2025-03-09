@@ -3,7 +3,7 @@ import { testNodeWallet } from '@alephium/web3-test'
 import { NFT, NFTOpenCollection } from '../artifacts/ts'
 
 async function nonFungibleToken() {
-  web3.setCurrentNodeProvider('http://127.0.0.1:22973', undefined, fetch)
+  web3.setCurrentNodeProvider('https://node.testnet.alephium.org/', undefined, fetch)
   const signer = await testNodeWallet()
   const account = await signer.getSelectedAccount()
 

@@ -24,6 +24,7 @@ import { useWallet } from "@alephium/web3-react";
 import MintButton from "../features/mint/MintButton";
 import PasswordScreen from "./PasswordScreen";
 import useTotalMints from "../features/mint/useTotalMints";
+import { POKEBALL_EVERY_X_WON_BATTLES } from "../constants";
 
 interface Position {
   x: number;
@@ -53,6 +54,10 @@ interface GameState {
   mintedNfts: string[];
   isPasswordValidated: boolean;
   isTestMode: boolean;
+}
+
+interface GameProps {
+  onQuestionAnswered?: (questionIndex: number, correct: boolean) => void;
 }
 
 const GRID_SIZE = 10;
@@ -195,6 +200,16 @@ const spawnPokeball = (existingPokeballs: Pokeball[]): Pokeball | null => {
   };
 };
 
+// Helper function to check if it's a new day since last pokeball spawn
+const isNewDay = () => {
+  const lastSpawnDate = localStorage.getItem("lastPokeballSpawnDate");
+  if (!lastSpawnDate) return true;
+
+  const lastDate = new Date(lastSpawnDate).toDateString();
+  const currentDate = new Date().toDateString();
+  return lastDate !== currentDate;
+};
+
 const TypewriterMessage: React.FC<{
   onComplete?: () => void;
   onMintClick: () => void;
@@ -205,8 +220,8 @@ const TypewriterMessage: React.FC<{
   const { signer } = useWallet();
 
   const fullMessage = signer
-    ? "Congratulations, you found a gift!"
-    : "Congratulations, you found a gift! Connect your Alephium mobile wallet using the button on the top right of the screen (using WalletConnect) and claim your gift NFT!";
+    ? "Congratulations, you found your daily gift! Mint it and come back tomorrow for another one!"
+    : "Congratulations, you found your daily gift! Connect your Alephium mobile wallet using the button on the top right of the screen (using WalletConnect) and claim your gift NFT!";
   const messageSpeed = 40; // Speed of typing in milliseconds
 
   useEffect(() => {
@@ -228,14 +243,15 @@ const TypewriterMessage: React.FC<{
 
   return (
     <div className="typewriter-message">
-      {displayText} <br />
-      <br />
       <MintButton onMintClick={onMintClick} mintedNfts={mintedNfts} onNftMinted={onNftMinted} />
+      <br />
+      <br />
+      {displayText}
     </div>
   );
 };
 
-export const Game: React.FC = () => {
+export const Game: React.FC<GameProps> = ({ onQuestionAnswered }) => {
   const { allNFTsMinted } = useTotalMints();
   const [gameState, setGameState] = useState<GameState>({
     playerPosition: { x: 0, y: 0 },
@@ -498,10 +514,12 @@ export const Game: React.FC = () => {
         const newBattlesWon = prev.battlesWon + 1;
         let newPokeballs = [...prev.pokeballs];
 
-        // Every 3 battles won, spawn a new pokeball
-        if (newBattlesWon % 1 === 0 && !allNFTsMinted) {
+        // Spawn a new pokeball if it's a new day and there are NFTs left to mint
+        if (newBattlesWon % POKEBALL_EVERY_X_WON_BATTLES === 0 && isNewDay() && !allNFTsMinted) {
           const newPokeball = spawnPokeball(newPokeballs);
           if (newPokeball) {
+            // Update the last spawn date
+            localStorage.setItem("lastPokeballSpawnDate", new Date().toISOString());
             newPokeballs = [...newPokeballs, newPokeball];
           }
         }
@@ -660,6 +678,7 @@ export const Game: React.FC = () => {
                 onHealthChange={handleHealthChange}
                 enemyType={gameState.currentEnemyType}
                 isTestMode={gameState.isTestMode}
+                onQuestionAnswered={onQuestionAnswered}
               />
             </div>
           )}

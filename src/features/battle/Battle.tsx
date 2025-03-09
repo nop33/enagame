@@ -75,6 +75,7 @@ interface BattleProps {
   onHealthChange: (player: number, enemy: number) => void;
   enemyType: EnemyType;
   isTestMode: boolean;
+  onQuestionAnswered?: (questionIndex: number, correct: boolean) => void;
 }
 
 export const Battle: React.FC<BattleProps> = ({
@@ -84,9 +85,30 @@ export const Battle: React.FC<BattleProps> = ({
   onHealthChange,
   enemyType,
   isTestMode,
+  onQuestionAnswered,
 }) => {
   const QUIZ_QUESTIONS = isTestMode ? TEST_QUESTIONS : quizData;
-  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(Math.floor(Math.random() * QUIZ_QUESTIONS.length));
+  const [level] = useState(() => {
+    const answeredQuestions = JSON.parse(localStorage.getItem("correctly-answered-questions") || "[]");
+    return 5 + answeredQuestions.length;
+  });
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(() => {
+    // Get correctly answered questions from localStorage
+    const answeredQuestions = JSON.parse(localStorage.getItem("correctly-answered-questions") || "[]");
+    // Filter out questions that haven't been answered correctly yet
+    const unansweredQuestions = QUIZ_QUESTIONS.map((_, index) => index).filter(
+      (index) => !answeredQuestions.includes(index)
+    );
+
+    // If all questions have been answered, reset the answered questions
+    if (unansweredQuestions.length === 0) {
+      localStorage.setItem("correctly-answered-questions", "[]");
+      return Math.floor(Math.random() * QUIZ_QUESTIONS.length);
+    }
+
+    // Return a random unanswered question
+    return unansweredQuestions[Math.floor(Math.random() * unansweredQuestions.length)];
+  });
   const [message, setMessage] = useState("");
   const [isAttacking, setIsAttacking] = useState(false);
   const [isDamaged, setIsDamaged] = useState(false);
@@ -119,7 +141,7 @@ export const Battle: React.FC<BattleProps> = ({
 
   // Generate random damage between 1 and 2
   const getRandomDamage = () => {
-    return Math.random() + 100;
+    return Math.random() + 0.8;
   };
 
   // Get damage message based on damage amount
@@ -183,6 +205,17 @@ export const Battle: React.FC<BattleProps> = ({
       currentQuestion.options.findIndex((option) => option === selectedAnswer) === currentQuestion.correctAnswer - 1;
 
     if (correct) {
+      // Store correctly answered question in localStorage
+      const answeredQuestions = JSON.parse(localStorage.getItem("correctly-answered-questions") || "[]");
+      if (!answeredQuestions.includes(currentQuestionIndex)) {
+        answeredQuestions.push(currentQuestionIndex);
+        localStorage.setItem("correctly-answered-questions", JSON.stringify(answeredQuestions));
+      }
+
+      if (onQuestionAnswered) {
+        onQuestionAnswered(currentQuestionIndex, true);
+      }
+
       setIsAttacking(true);
       if (superAudioRef.current) {
         superAudioRef.current.currentTime = 0;
@@ -215,6 +248,9 @@ export const Battle: React.FC<BattleProps> = ({
         }, 3000);
       }, 500);
     } else {
+      if (onQuestionAnswered) {
+        onQuestionAnswered(currentQuestionIndex, false);
+      }
       if (slapAudioRef.current) {
         slapAudioRef.current.currentTime = 0;
         slapAudioRef.current.play();
@@ -246,6 +282,21 @@ export const Battle: React.FC<BattleProps> = ({
         setTimeout(() => onBattleEnd(false), 5000);
         return;
       }
+    }
+
+    // Get next unanswered question
+    const answeredQuestions = JSON.parse(localStorage.getItem("correctly-answered-questions") || "[]");
+    const unansweredQuestions = QUIZ_QUESTIONS.map((_, index) => index).filter(
+      (index) => !answeredQuestions.includes(index)
+    );
+
+    // If all questions have been answered, reset and use all questions
+    if (unansweredQuestions.length === 0) {
+      localStorage.setItem("correctly-answered-questions", "[]");
+      setCurrentQuestionIndex(Math.floor(Math.random() * QUIZ_QUESTIONS.length));
+    } else {
+      // Pick a random unanswered question
+      setCurrentQuestionIndex(unansweredQuestions[Math.floor(Math.random() * unansweredQuestions.length)]);
     }
   };
 
@@ -283,7 +334,7 @@ export const Battle: React.FC<BattleProps> = ({
           <div className="player-info">
             <div className="name-level">
               <span className="name">ENA</span>
-              <span className="level">Lv5</span>
+              <span className="level">Lv{level}</span>
             </div>
             <div className="health-container">
               <div className="hp-label">HP</div>
