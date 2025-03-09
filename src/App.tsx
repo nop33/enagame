@@ -7,7 +7,6 @@ import Confetti from "react-confetti";
 import useTotalMints from "./features/mint/useTotalMints";
 import { MAX_SUPPLY, NETWORK } from "./constants";
 import quizData from "./data/quiz.json";
-import DeployButton from "./features/deploy/DeployButton";
 
 function App() {
   const { totalSupply, allNFTsMinted } = useTotalMints();
@@ -34,7 +33,7 @@ function App() {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  const handleQuestionAnswered = (questionIndex: number, correct: boolean) => {
+  const handleQuestionAnswered = (_questionIndex: number, correct: boolean) => {
     if (correct) {
       const answeredQuestions = JSON.parse(localStorage.getItem("correctly-answered-questions") || "[]");
       setRemainingQuestions(quizData.length - answeredQuestions.length);
